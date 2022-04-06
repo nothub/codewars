@@ -20,4 +20,9 @@ public class DnaStrandTest {
     public void test03() {
         assertEquals("CATA", DnaStrand.makeComplement("GTAT"));
     }
+
+    @Test
+    public void test04() {
+        assertEquals("", DnaStrand.makeComplement(""));
+    }
 }
