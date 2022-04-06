@@ -1,21 +1,19 @@
 package lol.hub.codewars;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DnaStrand {
-    private static final Map<Character, Character> complements = Map.of(
-        'A', 'T',
-        'T', 'A',
-        'C', 'G',
-        'G', 'C'
+    private static final Map<Integer, String> complements = Map.of(
+        (int) 'A', "T",
+        (int) 'T', "A",
+        (int) 'C', "G",
+        (int) 'G', "C"
     );
 
     public static String makeComplement(String dna) {
-        char[] original = dna.toCharArray();
-        char[] complement = new char[dna.length()];
-        for (int i = 0; i < original.length; i++) {
-            complement[i] = complements.get(original[i]);
-        }
-        return new String(complement);
+        return dna.chars()
+            .mapToObj(complements::get)
+            .collect(Collectors.joining());
     }
 }
