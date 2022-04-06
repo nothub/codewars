@@ -1,4 +1,4 @@
-package lol.hub.codewars;
+package lol.hub.codewars.complementary_dna;
 
 import java.util.Map;
 import java.util.stream.Collectors;

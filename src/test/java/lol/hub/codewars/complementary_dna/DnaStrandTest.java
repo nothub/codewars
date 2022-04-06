@@ -1,9 +1,8 @@
-package lol.hub.codewars;
+package lol.hub.codewars.complementary_dna;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
 
 public class DnaStrandTest {
     @Test
