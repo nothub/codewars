@@ -12,4 +12,12 @@ public class WhichAreInTest {
         String[] r = new String[]{"arp", "live", "strong"};
         assertArrayEquals(r, WhichAreIn.inArray(a, b));
     }
+
+    @Test
+    public void test2() {
+        String[] a = new String[]{"live", "arp", "strong"};
+        String[] b = new String[]{"harp", "sharp", "lively", "alive", "armstrong"};
+        String[] r = new String[]{"arp", "live", "strong"};
+        assertArrayEquals(r, WhichAreIn.inArray(a, b));
+    }
 }
