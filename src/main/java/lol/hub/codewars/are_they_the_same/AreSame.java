@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 public class AreSame {
     public static boolean comp(int[] a, int[] b) {
         if (a == null || b == null) return false;
-        if (a.length == 0 || b.length == 0) return false;
+        if (a.length == 0 && b.length == 0) return true;
+        if (a.length != 0 && b.length == 0) return false;
+        if (a.length == 0 && b.length != 0) return false;
         return Arrays.stream(a)
             .mapToObj(i -> i * i)
             .collect(Collectors.toUnmodifiableSet())

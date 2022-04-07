@@ -25,6 +25,13 @@ public class AreSameTest {
     public void test3() {
         int[] a = new int[]{};
         int[] b = new int[]{};
+        assertTrue(AreSame.comp(a, b));
+    }
+
+    @Test
+    public void test4() {
+        int[] a = new int[]{2, 2, 3};
+        int[] b = new int[]{4, 9, 9};
         assertFalse(AreSame.comp(a, b));
     }
 }
