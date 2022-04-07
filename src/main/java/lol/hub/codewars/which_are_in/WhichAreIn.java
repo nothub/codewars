@@ -1,6 +1,7 @@
 package lol.hub.codewars.which_are_in;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public class WhichAreIn {
                 }
             }
         }
+        substrings.sort(Comparator.naturalOrder());
         return substrings.toArray(new String[0]);
     }
 }
