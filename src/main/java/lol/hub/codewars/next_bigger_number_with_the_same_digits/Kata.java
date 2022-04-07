@@ -3,7 +3,7 @@ package lol.hub.codewars.next_bigger_number_with_the_same_digits;
 import java.util.HashSet;
 import java.util.Set;
 
-// TODO: too slow!
+// TODO: too slow! use knuth-l or something like that instead of recursive
 
 /**
  * @see <a href="https://www.codewars.com/kata/55983863da40caa2c900004e">codewars.com</a>
