@@ -54,4 +54,19 @@ public class KataTests {
     public void test9() {
         assertEquals(1647732015, Kata.nextBiggerNumber(1647731520));
     }
+
+    @Test
+    public void test10() {
+        assertEquals(123456798, Kata.nextBiggerNumber(123456789));
+    }
+
+    @Test
+    public void test11() {
+        assertEquals(1234567908, Kata.nextBiggerNumber(1234567890));
+    }
+
+    @Test // TODO: too slow ;c
+    public void test12() {
+        assertEquals(-1L, Kata.nextBiggerNumber(9876543210L));
+    }
 }
