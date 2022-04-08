@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 
 public class ExampleTests {
-    //@Test
+    @Test
     public void test1() {
         // HELLO => WORLD!
         String[] initial = new String[]{"HELLO "};
@@ -13,7 +13,7 @@ public class ExampleTests {
         assertArrayEquals(new String[]{"WORLD!"}, Dinglemouse.flapDisplay(initial, rotors));
     }
 
-    //@Test
+    @Test
     public void test2() {
         // CODE => WARS
         String[] initial = new String[]{"CODE"};
@@ -21,7 +21,7 @@ public class ExampleTests {
         assertArrayEquals(new String[]{"WARS"}, Dinglemouse.flapDisplay(initial, rotors));
     }
 
-    //@Test
+    @Test
     public void test3() {
         // CAT => DOG
         String[] initial = new String[]{"CAT"};
