@@ -7,11 +7,31 @@ import org.junit.rules.Timeout;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class SolutionTest {
     @Rule
     public Timeout globalTimeout = Timeout.millis(16000);
+
+    @Test
+    public void test_split_to_digits() {
+        assertEquals(Arrays.toString(new int[]{1}), Arrays.toString(HowManyNumbers.splitToDigits(1)));
+        assertEquals(Arrays.toString(new int[]{1, 2}), Arrays.toString(HowManyNumbers.splitToDigits(12)));
+        assertEquals(Arrays.toString(new int[]{1, 2, 3}), Arrays.toString(HowManyNumbers.splitToDigits(123)));
+    }
+
+    @Test
+    public void test_is_digits_increasing() {
+        assertTrue(HowManyNumbers.isDigitsIncreasing(1));
+        assertTrue(HowManyNumbers.isDigitsIncreasing(123));
+        assertFalse(HowManyNumbers.isDigitsIncreasing(321));
+    }
+
+    @Test
+    public void test_is_digits_sum() {
+        assertTrue(HowManyNumbers.isDigitsSum(123, 6));
+        assertTrue(HowManyNumbers.isDigitsSum(1, 1));
+    }
 
     @Test
     public void test1() {
@@ -53,7 +73,7 @@ public class SolutionTest {
         assertEquals(Arrays.asList(285L, 1116999L, 5555556L), HowManyNumbers.findAll(36, 7));
     }
 
-    //@Test
+    @Test
     public void test9() {
         assertEquals(Arrays.asList(873L, 111129999L, 444555555L), HowManyNumbers.findAll(42, 9));
     }

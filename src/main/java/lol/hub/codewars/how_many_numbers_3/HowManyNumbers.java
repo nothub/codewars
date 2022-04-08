@@ -1,7 +1,6 @@
 package lol.hub.codewars.how_many_numbers_3;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -27,25 +26,31 @@ class HowManyNumbers {
         return out;
     }
 
-    private static boolean isDigitsSum(int num, int sum) {
+    static boolean isDigitsSum(int num, int sum) {
         int digitSum = 0;
-        for (Integer integer : splitToDigits(num)) {
-            digitSum += integer;
+        for (Integer digit : splitToDigits(num)) {
+            digitSum += digit;
         }
         return digitSum == sum;
     }
 
-    private static boolean isDigitsIncreasing(int num) {
-        List<Integer> sorted = splitToDigits(num);
-        sorted.sort(Comparator.reverseOrder());
-        return splitToDigits(num).equals(sorted);
+    static boolean isDigitsIncreasing(int num) {
+        int last = Integer.MIN_VALUE;
+        for (Integer digit : splitToDigits(num)) {
+            if (last > digit) return false;
+            last = digit;
+        }
+        return true;
     }
 
-    private static List<Integer> splitToDigits(int num) {
-        List<Integer> digits = new ArrayList<>();
+    static int[] splitToDigits(int num) {
+        int size = (int) (Math.log10(num) + 1);
+        int[] digits = new int[size];
+        int i = size - 1;
         while (num > 0) {
-            digits.add(num % 10);
+            digits[i] = num % 10;
             num /= 10;
+            i--;
         }
         return digits;
     }
