@@ -28,10 +28,11 @@ class HowManyNumbers {
     }
 
     private static boolean isDigitsSum(int num, int sum) {
-        return splitToDigits(num)
-            .stream()
-            .mapToInt(Integer::intValue)
-            .sum() == sum;
+        int digitSum = 0;
+        for (Integer integer : splitToDigits(num)) {
+            digitSum += integer;
+        }
+        return digitSum == sum;
     }
 
     private static boolean isDigitsIncreasing(int num) {
