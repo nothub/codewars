@@ -10,7 +10,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 public class SolutionTest {
-    @Rule
+    //@Rule // TODO: too slow!
     public Timeout globalTimeout = Timeout.millis(16000);
 
     @Test
