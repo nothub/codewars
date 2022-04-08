@@ -5,7 +5,12 @@ package lol.hub.codewars.valid_parentheses;
  */
 public class Solution {
     public static boolean validParentheses(String parens) {
-        String s = parens.replaceAll("[^()]", "");
-        return s.replaceAll("[^(]", "").length() == s.replaceAll("[^)]", "").length();
+        int level = 0;
+        for (char c : parens.replaceAll("[^()]", "").toCharArray()) {
+            if (c == '(') level++;
+            else if (c == ')') level--;
+            if (level < 0) return false;
+        }
+        return level == 0;
     }
 }

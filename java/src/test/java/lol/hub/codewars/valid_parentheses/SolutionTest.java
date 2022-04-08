@@ -30,4 +30,19 @@ public class SolutionTest {
     public void test5() {
         assertTrue(Solution.validParentheses("adasdasfa"));
     }
+
+    @Test
+    public void test6() {
+        assertFalse(Solution.validParentheses(")))(B(Nk((2)(/y))+(())(k"));
+    }
+
+    @Test
+    public void test7() {
+        assertFalse(Solution.validParentheses("())("));
+    }
+
+    @Test
+    public void test8() {
+        assertFalse(Solution.validParentheses("()()("));
+    }
 }
