@@ -8,11 +8,8 @@ import java.util.Map;
  */
 public class CountingDuplicates {
     public static int duplicateCount(String text) {
-        Map<Character, Integer> map = new HashMap<>();
-        text = text.toLowerCase();
-        for (char c : text.toCharArray()) {
-            map.put(c, map.getOrDefault(c, 0) + 1);
-        }
+        Map<Integer, Integer> map = new HashMap<>();
+        text.toLowerCase().chars().forEach(c -> map.put(c, map.getOrDefault(c, 0) + 1));
         return (int) map.values().stream().filter(i -> i > 1).count();
     }
 }
