@@ -9,3 +9,6 @@
 # java
 !/java/src/**/*.java
 !/java/pom.xml
+
+# python
+!/python/**/*.py
