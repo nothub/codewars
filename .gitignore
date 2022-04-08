@@ -2,8 +2,10 @@
 !*/
 
 !/.github/**
-!/src/**
 !/.editorconfig
 !/.gitignore
-!/pom.xml
 !/README.md
+
+# java
+!/java/src/**/*.java
+!/java/pom.xml
