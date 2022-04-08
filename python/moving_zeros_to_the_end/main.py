@@ -1,5 +1,5 @@
 def move_zeros(array):
-    """`codewars.com <https://www.codewars.com/kata/52597aa56021e91c93000cb0/train/python>`_"""
+    """`codewars.com <https://www.codewars.com/kata/52597aa56021e91c93000cb0>`_"""
     out = []
     for e in array:
         if e is not 0:
