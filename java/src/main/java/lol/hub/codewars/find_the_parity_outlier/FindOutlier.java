@@ -5,10 +5,7 @@ package lol.hub.codewars.find_the_parity_outlier;
  */
 public class FindOutlier {
     static int find(int[] integers) {
-        int odds = 0;
-        int evens = 0;
-        int lastOdd = 0;
-        int lastEven = 0;
+        int odds = 0, evens = 0, lastOdd = 0, lastEven = 0;
         for (int i : integers) {
             if (i % 2 == 0) {
                 lastEven = i;
@@ -17,8 +14,8 @@ public class FindOutlier {
                 lastOdd = i;
                 odds++;
             }
-            if (evens > 1 && odds == 1) return lastOdd;
-            if (evens == 1 && odds > 1) return lastEven;
+            if (odds == 1 && evens > 1) return lastOdd;
+            if (odds > 1 && evens == 1) return lastEven;
         }
         throw new IllegalArgumentException();
     }
