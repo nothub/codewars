@@ -9,4 +9,12 @@ public class MorseCodeDecoderTest {
     public void testExampleFromDescription() {
         assertEquals("HEY JUDE", MorseCodeDecoder.decode(".... . -.--   .--- ..- -.. ."));
     }
+
+    @Test
+    public void test1() {
+        assertEquals("E", MorseCodeDecoder.decode("."));
+        assertEquals("E", MorseCodeDecoder.decode(" ."));
+        assertEquals("E", MorseCodeDecoder.decode(". "));
+        assertEquals("E", MorseCodeDecoder.decode(" . "));
+    }
 }
