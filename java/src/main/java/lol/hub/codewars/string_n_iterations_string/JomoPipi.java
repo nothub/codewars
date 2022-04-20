@@ -1,21 +1,15 @@
 package lol.hub.codewars.string_n_iterations_string;
 
-import org.apache.commons.lang3.time.StopWatch;
-
 /**
  * @see <a href="https://www.codewars.com/kata/5ae43ed6252e666a6b0000a4">codewars.com</a>
  */
 public class JomoPipi {
     public static String jumbledString(String s, long n) {
-        StopWatch sw = new StopWatch();
-        sw.start();
-        String init = s;
-        System.out.println("input=" + s);
-        System.out.println("iters=" + n);
+        String original = s;
         long distance = -1;
         for (long i = 1; i <= n; i++) {
             s = shift(s);
-            if (s.equals(init)) {
+            if (s.equals(original)) {
                 if (distance == -1) {
                     distance = n % i;
                 } else {
@@ -28,8 +22,6 @@ public class JomoPipi {
                 }
             }
         }
-        sw.stop();
-        System.out.println("speed=" + sw.getTime() + "ms");
         return s;
     }
 
@@ -40,11 +32,9 @@ public class JomoPipi {
         int back = Math.round(array.length / 2f);
         for (int i = 0; i < array.length; i++) {
             if (i % 2 == 0) {
-                shifted[front] = array[i];
-                front++;
+                shifted[front++] = array[i];
             } else {
-                shifted[back] = array[i];
-                back++;
+                shifted[back++] = array[i];
             }
         }
         return new String(shifted);
