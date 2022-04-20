@@ -15,7 +15,6 @@ public class JomoPipi {
         long distance = -1;
         for (long i = 1; i <= n; i++) {
             s = shift(s);
-            //System.out.println(i + ": " + s);
             if (s.equals(init)) {
                 if (distance == -1) {
                     distance = n % i;
@@ -36,15 +35,18 @@ public class JomoPipi {
 
     private static String shift(String s) {
         char[] array = s.toCharArray();
-        String front = "";
-        String back = "";
+        char[] shifted = new char[array.length];
+        int front = 0;
+        int back = Math.round(array.length / 2f);
         for (int i = 0; i < array.length; i++) {
             if (i % 2 == 0) {
-                front = front + array[i];
+                shifted[front] = array[i];
+                front++;
             } else {
-                back = back + array[i];
+                shifted[back] = array[i];
+                back++;
             }
         }
-        return front + back;
+        return new String(shifted);
     }
 }
