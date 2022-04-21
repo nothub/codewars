@@ -8,43 +8,33 @@ import java.util.Map;
  * @see <a href="https://www.codewars.com/kata/58e24788e24ddee28e000053">codewars.com</a>
  */
 public class SimpleAssembler {
-    private static final Map<String, Integer> registers = new HashMap<>();
-
     public static Map<String, Integer> interpret(String[] program) {
         System.out.println(Arrays.toString(program));
-        System.out.println("-----");
+        Map<String, Integer> registers = new HashMap<>();
         for (int i = 0; i < program.length; i++) {
-            System.out.println("index: " + i);
-            System.out.println("instr: " + program[i]);
             String[] inst = program[i].split(" ");
             switch (inst[0]) {
                 case "mov":
-                    // mov x y - copies y (either a constant value or the content of a register) into register x
-                    registers.put(inst[1], resolve(inst[2]));
+                    registers.put(inst[1], resolve(inst[2], registers));
                     break;
                 case "inc":
-                    // inc x - increases the content of the register x by one
                     registers.put(inst[1], registers.getOrDefault(inst[1], 0) + 1);
                     break;
                 case "dec":
-                    // dec x - decreases the content of the register x by one
                     registers.put(inst[1], registers.getOrDefault(inst[1], 0) - 1);
                     break;
                 case "jnz":
-                    // jnz x y - jumps to an instruction y steps away (positive means forward, negative means backward, y can be a register or a constant), but only if x (a constant or a register) is not zero
-                    if (resolve(inst[1]) == 0) break;
-                    i = (i - 1) + resolve(inst[2]);
+                    if (resolve(inst[1], registers) != 0) i = (i - 1) + resolve(inst[2], registers);
                     break;
                 default:
                     throw new IllegalStateException();
             }
-            System.out.println(registers);
-            System.out.println("-----");
         }
+        System.out.println(registers);
         return registers;
     }
 
-    private static int resolve(String s) {
+    private static int resolve(String s, Map<String, Integer> registers) {
         if (isValue(s)) return Integer.parseInt(s);
         else return registers.getOrDefault(s, 0);
     }
