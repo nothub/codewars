@@ -32,11 +32,8 @@ public class SimpleAssembler {
                     break;
                 case "jnz":
                     // jnz x y - jumps to an instruction y steps away (positive means forward, negative means backward, y can be a register or a constant), but only if x (a constant or a register) is not zero
-                    int x = resolve(inst[1]);
-                    if (x == 0) break;
-                    int y = resolve(inst[2]);
-                    System.out.println("jumping " + y);
-                    i = (i - 1) + y;
+                    if (resolve(inst[1]) == 0) break;
+                    i = (i - 1) + resolve(inst[2]);
                     break;
                 default:
                     throw new IllegalStateException();
@@ -48,11 +45,11 @@ public class SimpleAssembler {
     }
 
     private static int resolve(String s) {
-        if (isNumber(s)) return Integer.parseInt(s);
+        if (isValue(s)) return Integer.parseInt(s);
         else return registers.getOrDefault(s, 0);
     }
 
-    static boolean isNumber(String value) {
+    private static boolean isValue(String value) {
         return value.matches("^-?[0-9]+$");
     }
 }
