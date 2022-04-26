@@ -1,0 +1,3 @@
+module extra_perfect_numbers_special_numbers_series_number_7
+
+go 1.18
