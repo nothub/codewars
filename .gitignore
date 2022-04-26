@@ -12,3 +12,7 @@
 
 # python
 !/python/**/*.py
+
+# golang
+!/go/**/*.go
+!/go/**/go.mod
