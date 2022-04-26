@@ -27,29 +27,32 @@ public class Dinglemouse {
         List<String> results = new ArrayList<>();
         results.add(zoo);
         List<String> animals = new ArrayList<>(List.of(zoo.split(",")));
-        int i = 0;
+        int index = 0;
         int lastCount = -1;
-        while (animals.size() > 1) {
-            Set<String> food = relations.getOrDefault(animals.get(i), Collections.emptySet());
-            if (i > 0 && food.contains(animals.get(i - 1))) {
-                results.add(animals.get(i) + " eats " + animals.get(i - 1));
-                animals.remove(i - 1);
-                i = 0;
+        do {
+            Set<String> food = relations.getOrDefault(animals.get(index), Collections.emptySet());
+            // check left
+            if (index > 0 && food.contains(animals.get(index - 1))) {
+                results.add(animals.get(index) + " eats " + animals.get(index - 1));
+                animals.remove(index - 1);
+                index = 0;
                 continue;
             }
-            if (i < animals.size() - 1 && food.contains(animals.get(i + 1))) {
-                results.add(animals.get(i) + " eats " + animals.get(i + 1));
-                animals.remove(i + 1);
-                i = 0;
+            // check right
+            if (index < animals.size() - 1 && food.contains(animals.get(index + 1))) {
+                results.add(animals.get(index) + " eats " + animals.get(index + 1));
+                animals.remove(index + 1);
+                index = 0;
                 continue;
             }
-            i++;
-            if (i >= animals.size()) {
-                i = 0;
+            index++;
+            // check if anything changed
+            if (index >= animals.size()) {
                 if (lastCount == animals.size()) break;
                 lastCount = animals.size();
+                index = 0;
             }
-        }
+        } while (animals.size() > 1);
         results.add(String.join(",", animals));
         return results.toArray(new String[0]);
     }
