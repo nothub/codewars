@@ -20,8 +20,13 @@ package $module
 
 // $url
 
+import (
+    "log"
+)
+
 func Solve(input bool) bool {
-  return input
+    log.Println("hi!")
+    return !input
 }
 EOF
 
@@ -31,8 +36,8 @@ package $module
 import "testing"
 
 func Test(t *testing.T) {
-  if Solve(true) != true {
-    t.Errorf("test failed")
-  }
+    if Solve(false) != true {
+        t.Errorf("test failed")
+    }
 }
 EOF
