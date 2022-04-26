@@ -1,4 +1,4 @@
-package convert_boolean_values_to_strings
+package convert_boolean_values_to_strings_yes_or_no
 
 import "testing"
 

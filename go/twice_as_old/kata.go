@@ -1,6 +1,6 @@
 package twice_as_old
 
-// https://www.codewars.com/kata/5601409514fc93442500010b
+// https://www.codewars.com/kata/5b853229cfde412a470000d0
 
 import "math"
 

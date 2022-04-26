@@ -1,0 +1,3 @@
+module convert_boolean_values_to_strings_yes_or_no
+
+go 1.18
