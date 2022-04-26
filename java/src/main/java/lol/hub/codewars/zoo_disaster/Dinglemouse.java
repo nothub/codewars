@@ -28,22 +28,29 @@ public class Dinglemouse {
         results.add(zoo);
         List<String> animals = new ArrayList<>(List.of(zoo.split(",")));
         int i = 0;
+        int lastCount = -1;
         while (animals.size() > 1) {
             Set<String> food = relations.getOrDefault(animals.get(i), Collections.emptySet());
             if (i > 0 && food.contains(animals.get(i - 1))) {
                 results.add(animals.get(i) + " eats " + animals.get(i - 1));
                 animals.remove(i - 1);
                 i = 0;
-            } else if (i < animals.size() - 1 && food.contains(animals.get(i + 1))) {
+                continue;
+            }
+            if (i < animals.size() - 1 && food.contains(animals.get(i + 1))) {
                 results.add(animals.get(i) + " eats " + animals.get(i + 1));
                 animals.remove(i + 1);
                 i = 0;
-            } else {
-                i++;
-                if (i >= animals.size()) i = 0;
+                continue;
+            }
+            i++;
+            if (i >= animals.size()) {
+                i = 0;
+                if (lastCount == animals.size()) break;
+                lastCount = animals.size();
             }
         }
-        results.add(animals.get(0));
+        results.add(String.join(",", animals));
         return results.toArray(new String[0]);
     }
 }

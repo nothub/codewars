@@ -24,4 +24,14 @@ public class ExampleTest {
         assertArrayEquals(expected, actual);
     }
 
+    @Test
+    public void eatRightMulti() {
+        final String input = "giraffe,leaves,leaves,leaves,bear,bug,leaves,leaves,panda";
+        final String[] expected = {""};
+        String[] actual = Dinglemouse.whoEatsWho(input);
+        System.out.println("expected: " + Arrays.toString(expected));
+        System.out.println("actual:   " + Arrays.toString(actual));
+        assertArrayEquals(expected, actual);
+    }
+
 }
