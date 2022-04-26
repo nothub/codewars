@@ -16,3 +16,7 @@
 # golang
 !/go/**/*.go
 !/go/**/go.mod
+
+# util
+!/init.sh
+!/go/init.sh
