@@ -5,8 +5,5 @@ package ip_validation
 import "net"
 
 func Is_valid_ip(ip string) bool {
-	if net.ParseIP(ip) != nil {
-		return true
-	}
-	return false
+	return net.ParseIP(ip) != nil
 }
