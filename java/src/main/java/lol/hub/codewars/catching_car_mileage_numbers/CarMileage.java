@@ -23,33 +23,13 @@ public class CarMileage {
     }
 
     private static boolean interesting(int number, int[] awesomePhrases) {
-        System.out.println(number);
-
-        boolean threeOrMoreDigits = threeOrMoreDigits(number);
-        System.out.println("threeOrMoreDigits:\t" + threeOrMoreDigits);
-
-        boolean followedByAllZeros = followedByAllZeros(number);
-        System.out.println("followedByAllZeros:\t" + followedByAllZeros);
-
-        boolean everyDigitSame = everyDigitSame(number);
-        System.out.println("everyDigitSame:\t" + everyDigitSame);
-
-        boolean sequentialIncementing = isSequentialIncementing(number);
-        System.out.println("sequentialIncementing:\t" + sequentialIncementing);
-
-        boolean sequentialDecrementing = isSequentialDecrementing(number);
-        System.out.println("sequentialDecrementing:\t" + sequentialDecrementing);
-
-        boolean palindrome = palindrome(number);
-        System.out.println("palindrome:\t" + palindrome);
-
-        boolean awesomePhrasesContains = awesomePhrasesContains(number, awesomePhrases);
-        System.out.println("awesomePhrasesContains:\t" + awesomePhrasesContains);
-
-        boolean interesting = threeOrMoreDigits && (followedByAllZeros || everyDigitSame || sequentialIncementing || sequentialDecrementing || palindrome || awesomePhrasesContains);
-        System.out.println("interesting:\t" + interesting);
-
-        return interesting;
+        return threeOrMoreDigits(number) && (
+            followedByAllZeros(number)
+                || everyDigitSame(number)
+                || isSequentialIncementing(number)
+                || isSequentialDecrementing(number)
+                || palindrome(number)
+                || awesomePhrasesContains(number, awesomePhrases));
     }
 
     private static boolean threeOrMoreDigits(int number) {
