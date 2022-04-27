@@ -4,7 +4,7 @@ package count_the_monkeys
 
 func monkeyCount(n int) []int {
 	results := make([]int, n)
-	for i := 1; i <= n; i++ {
+	for i := range results {
 		results[i] = i + 1
 	}
 	return results
