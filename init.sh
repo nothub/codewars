@@ -2,14 +2,18 @@
 
 set -euo pipefail
 
-json=$(curl --request GET --location --silent https://www.codewars.com/api/v1/code-challenges/"$1")
+id=$1
+lang=$2
+
+if [ ! -d "$lang" ]; then
+    echo 1>&2 "no implementation for: $lang"
+    exit 1
+fi
+
+json=$(curl --request GET --location --silent https://www.codewars.com/api/v1/code-challenges/"$id")
 
 if [[ "$(printf '%s\n' "$json" | jq --raw-output 'has("slug")')" == "false" ]]; then
-    echo 1>&2 "invalid challenge data!"
-    if [[ "$(printf '%s\n' "$json" | jq --raw-output 'has("reason")')" == "true" ]]; then
-        reason=$(printf '%s\n' "$json" | jq --raw-output '.reason')
-        echo 1>&2 "$reason"
-    fi
+    echo 1>&2 "unresolved kata id: $id"
     exit 1
 fi
 
