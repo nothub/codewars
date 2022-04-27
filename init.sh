@@ -16,6 +16,7 @@ fi
 name=$(printf '%s\n' "$json" | jq --raw-output '.slug' | sed -e 's/[^a-z0-9]/_/g')
 url=$(printf '%s\n' "$json" | jq --raw-output '.url')
 
-cd go
+#cd go
 #cd java
+cd python
 ./init.sh "$name" "$url"
