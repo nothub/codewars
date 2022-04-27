@@ -18,24 +18,32 @@ package $package
 
 // $kata_url
 
-import (
-    "log"
-)
+import "log"
 
-func solve(input bool) bool {
-    log.Println("hi!")
-    return !input
+func solve(word string) string {
+	word = word + "!"
+	log.Println(word)
+	return word
 }
 EOF
 
 cat <<EOF >kata_test.go
 package $package
 
+// $kata_url
+
 import "testing"
 
-func Test(t *testing.T) {
-    if solve(false) != true {
-        t.Errorf("test failed")
-    }
+func test(t *testing.T, input string, expected string) {
+	actual := solve(input)
+	if actual != expected {
+		t.Errorf("FAIL\ninput:    %s\nactual:   %s\nexpected: %s", input, actual, expected)
+	}
+}
+
+func TestHelloWorld(t *testing.T) {
+	input := "Hello, World"
+	expected := "Hello, World!"
+	test(t, input, expected)
 }
 EOF
