@@ -7,42 +7,43 @@ import (
 )
 
 func ToNato(words string) string {
-	m := make(map[string]string)
-	m["a"] = "Alfa"
-	m["b"] = "Bravo"
-	m["c"] = "Charlie"
-	m["d"] = "Delta"
-	m["e"] = "Echo"
-	m["f"] = "Foxtrot"
-	m["g"] = "Golf"
-	m["h"] = "Hotel"
-	m["i"] = "India"
-	m["j"] = "Juliett"
-	m["k"] = "Kilo"
-	m["l"] = "Lima"
-	m["m"] = "Mike"
-	m["n"] = "November"
-	m["o"] = "Oscar"
-	m["p"] = "Papa"
-	m["q"] = "Quebec"
-	m["r"] = "Romeo"
-	m["s"] = "Sierra"
-	m["t"] = "Tango"
-	m["u"] = "Uniform"
-	m["v"] = "Victor"
-	m["w"] = "Whiskey"
-	m["x"] = "X-ray"
-	m["y"] = "Yankee"
-	m["z"] = "Zulu"
-	m[","] = ","
-	m["."] = "."
-	m["!"] = "!"
-	m["?"] = "?"
+	m := map[string]string{
+		"a": "Alfa",
+		"b": "Bravo",
+		"c": "Charlie",
+		"d": "Delta",
+		"e": "Echo",
+		"f": "Foxtrot",
+		"g": "Golf",
+		"h": "Hotel",
+		"i": "India",
+		"j": "Juliett",
+		"k": "Kilo",
+		"l": "Lima",
+		"m": "Mike",
+		"n": "November",
+		"o": "Oscar",
+		"p": "Papa",
+		"q": "Quebec",
+		"r": "Romeo",
+		"s": "Sierra",
+		"t": "Tango",
+		"u": "Uniform",
+		"v": "Victor",
+		"w": "Whiskey",
+		"x": "X-ray",
+		"y": "Yankee",
+		"z": "Zulu",
+		",": ",",
+		".": ".",
+		"!": "!",
+		"?": "?",
+	}
 	words = strings.ToLower(words)
 	words = strings.ReplaceAll(words, " ", "")
-	var out []string
+	var nato []string
 	for _, r := range strings.Split(words, "") {
-		out = append(out, m[r])
+		nato = append(nato, m[r])
 	}
-	return strings.Join(out, " ")
+	return strings.Join(nato, " ")
 }
