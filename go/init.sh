@@ -22,7 +22,7 @@ import (
     "log"
 )
 
-func Solve(input bool) bool {
+func solve(input bool) bool {
     log.Println("hi!")
     return !input
 }
@@ -34,7 +34,7 @@ package $package
 import "testing"
 
 func Test(t *testing.T) {
-    if Solve(false) != true {
+    if solve(false) != true {
         t.Errorf("test failed")
     }
 }
