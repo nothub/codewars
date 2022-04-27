@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 /**
  * @see <a href="https://www.codewars.com/kata/52c4dd683bfd3b434c000292">codewars.com</a>
  */
-public class Kata {
+public class CarMileage {
 
     public static final int NOT_INTERESTING = 0;
     public static final int NEXT_TWO_MILES = 1;
@@ -23,13 +23,33 @@ public class Kata {
     }
 
     private static boolean interesting(int number, int[] awesomePhrases) {
-        return threeOrMoreDigits(number) &&
-            followedByAllZeros(number)
-            || everyDigitSame(number)
-            || isSequentialIncementing(number)
-            || isSequentialDecrementing(number)
-            || palindrome(number)
-            || awesomePhrasesContains(number, awesomePhrases);
+        System.out.println(number);
+
+        boolean threeOrMoreDigits = threeOrMoreDigits(number);
+        System.out.println("threeOrMoreDigits:\t" + threeOrMoreDigits);
+
+        boolean followedByAllZeros = followedByAllZeros(number);
+        System.out.println("followedByAllZeros:\t" + followedByAllZeros);
+
+        boolean everyDigitSame = everyDigitSame(number);
+        System.out.println("everyDigitSame:\t" + everyDigitSame);
+
+        boolean sequentialIncementing = isSequentialIncementing(number);
+        System.out.println("sequentialIncementing:\t" + sequentialIncementing);
+
+        boolean sequentialDecrementing = isSequentialDecrementing(number);
+        System.out.println("sequentialDecrementing:\t" + sequentialDecrementing);
+
+        boolean palindrome = palindrome(number);
+        System.out.println("palindrome:\t" + palindrome);
+
+        boolean awesomePhrasesContains = awesomePhrasesContains(number, awesomePhrases);
+        System.out.println("awesomePhrasesContains:\t" + awesomePhrasesContains);
+
+        boolean interesting = threeOrMoreDigits && (followedByAllZeros || everyDigitSame || sequentialIncementing || sequentialDecrementing || palindrome || awesomePhrasesContains);
+        System.out.println("interesting:\t" + interesting);
+
+        return interesting;
     }
 
     private static boolean threeOrMoreDigits(int number) {
@@ -53,14 +73,25 @@ public class Kata {
 
     private static boolean isSequentialIncementing(int number) {
         // The digits are sequential, incementing: 1234 (For incrementing sequences, 0 should come after 9, and not before 1, as in 7890)
-        // TODO
-        return false;
+        var digits = splitToDigits(number);
+        long last = digits[0] - 1;
+        for (long digit : digits) {
+            long n = digit == 0 ? 10 : digit;
+            if (last != n - 1) return false;
+            last = n;
+        }
+        return true;
     }
 
     private static boolean isSequentialDecrementing(int number) {
         // The digits are sequential, decrementing: 4321 (For decrementing sequences, 0 should come after 1, and not before 9, as in 3210)
-        // TODO
-        return false;
+        var digits = splitToDigits(number);
+        long last = digits[0] + 1;
+        for (long n : digits) {
+            if (last != n + 1) return false;
+            last = n;
+        }
+        return true;
     }
 
     private static boolean palindrome(int number) {
