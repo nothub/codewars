@@ -2,23 +2,21 @@
 
 set -euo pipefail
 
-module="$1"
-url="$2"
+package="$1"
+kata_url="$2"
 
-if [ -d "$module" ]; then
-    echo 1>&2 "$module is already present!"
+if [ -d "$package" ]; then
+    echo 1>&2 "$package is already present!"
     exit 1
 fi
 
-mkdir -p "$module"
-cd "$module"
-
-go mod init "$module"
+mkdir -p "$package"
+cd "$package"
 
 cat <<EOF >kata.go
-package $module
+package $package
 
-// $url
+// $kata_url
 
 import (
     "log"
@@ -31,7 +29,7 @@ func Solve(input bool) bool {
 EOF
 
 cat <<EOF >kata_test.go
-package $module
+package $package
 
 import "testing"
 

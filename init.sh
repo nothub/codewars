@@ -13,8 +13,9 @@ if [[ "$(printf '%s\n' "$json" | jq --raw-output 'has("slug")')" == "false" ]]; 
     exit 1
 fi
 
-module=$(printf '%s\n' "$json" | jq --raw-output '.slug' | sed -e 's/[^a-z0-9]/_/g')
+name=$(printf '%s\n' "$json" | jq --raw-output '.slug' | sed -e 's/[^a-z0-9]/_/g')
 url=$(printf '%s\n' "$json" | jq --raw-output '.url')
 
 cd go
-./init.sh "$module" "$url"
+#cd java
+./init.sh "$name" "$url"
