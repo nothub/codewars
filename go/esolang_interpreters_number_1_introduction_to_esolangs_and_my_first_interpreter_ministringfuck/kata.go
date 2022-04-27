@@ -4,7 +4,6 @@ package esolang_interpreters_number_1_introduction_to_esolangs_and_my_first_inte
 // https://esolangs.org/wiki/MiniStringFuck
 
 import (
-	"log"
 	"strings"
 )
 
@@ -21,7 +20,7 @@ func Interpreter(code string) string {
 		case ".":
 			out = out + string(rune(mem))
 		default:
-			log.Fatalln("unknown opcode: " + r)
+			panic("unknown opcode: " + r)
 		}
 	}
 	return out
