@@ -7,7 +7,7 @@ import "testing"
 func test(t *testing.T, code string, tape string, expected string) {
 	actual := Interpreter(code, tape)
 	if actual != expected {
-		t.Errorf("FAIL\ncode:     %s\ntape:     %s\nactual:   %s\nexpected: %s", code, tape, actual, expected)
+		t.Errorf("\ncode:     %s\ntape:     %s\nactual:   %s\nexpected: %s", code, tape, actual, expected)
 	}
 }
 
@@ -48,5 +48,12 @@ func Test5(t *testing.T) {
 	code := ">>>>>*<*<<*"
 	tape := "00101100"
 	expected := "00000000"
+	test(t, code, tape, expected)
+}
+
+func Test6(t *testing.T) {
+	code := "[[]*>*>*>]"
+	tape := "000"
+	expected := "000"
 	test(t, code, tape, expected)
 }
