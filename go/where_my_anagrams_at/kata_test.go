@@ -2,7 +2,7 @@ package where_my_anagrams_at
 
 import "testing"
 
-func assertSame(a []string, b []string) bool {
+func assertSame[T string | int](a []T, b []T) bool {
 	if a == nil && b == nil {
 		return true
 	}

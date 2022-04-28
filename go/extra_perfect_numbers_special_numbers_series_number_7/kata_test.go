@@ -2,7 +2,7 @@ package extra_perfect_numbers_special_numbers_series_number_7
 
 import "testing"
 
-func assertSame(a []int, b []int) bool {
+func assertSame[T string | int](a []T, b []T) bool {
 	if a == nil && b == nil {
 		return true
 	}

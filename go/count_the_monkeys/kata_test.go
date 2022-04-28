@@ -2,7 +2,7 @@ package count_the_monkeys
 
 import "testing"
 
-func assertSame(a []int, b []int) bool {
+func assertSame[T string | int](a []T, b []T) bool {
 	if a == nil && b == nil {
 		return true
 	}
