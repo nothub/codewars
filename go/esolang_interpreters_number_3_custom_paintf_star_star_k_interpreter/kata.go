@@ -29,10 +29,9 @@ func Interpreter(code string, iterations, width, height int) string {
 		data[i] = make([]int, width)
 	}
 
-	iters := 0
-
 	posX := 0
 	posY := 0
+	iters := 0
 
 	for {
 		if iters >= iterations {
@@ -46,29 +45,13 @@ func Interpreter(code string, iterations, width, height int) string {
 
 		switch src[srcp] {
 		case MOVN:
-			posY--
-			if posY < 0 {
-				posY = posY + height
-			}
-			posY = posY % height
+			posY = wrapDown(posY, height)
 		case MOVE:
-			posX++
-			if posX >= width {
-				posX = posX + width
-			}
-			posX = posX % width
+			posX = wrapUp(posX, width)
 		case MOVS:
-			posY++
-			if posY >= width {
-				posY = posY + height
-			}
-			posY = posY % height
+			posY = wrapUp(posY, height)
 		case MOVW:
-			posX--
-			if posX < 0 {
-				posX = posX + width
-			}
-			posX = posX % width
+			posX = wrapDown(posX, width)
 		case FLIP:
 			// Flip the bit at the current cell
 			if data[posY][posX] == 1 {
@@ -124,4 +107,22 @@ func Interpreter(code string, iterations, width, height int) string {
 		lines = append(lines, l)
 	}
 	return strings.Join(lines, separator)
+}
+
+func wrapUp(pos int, limit int) int {
+	pos++
+	if pos >= limit {
+		pos = pos + limit
+	}
+	pos = pos % limit
+	return pos
+}
+
+func wrapDown(pos int, limit int) int {
+	pos--
+	if pos < 0 {
+		pos = pos + limit
+	}
+	pos = pos % limit
+	return pos
 }
