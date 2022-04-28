@@ -1,6 +1,6 @@
-package esolang_interpreters_number_3_custom_smallfuck_interpreter
+package esolang_interpreters_number_3_custom_paintf_star_star_k_interpreter
 
-// https://www.codewars.com/kata/58678d29dbca9a68d80000d7
+// https://www.codewars.com/kata/5868a68ba44cfc763e00008d
 
 import (
 	"log"
@@ -48,22 +48,38 @@ func Interpreter(code string, iterations, width, height int) string {
 		switch src[srcp] {
 		case MOVN:
 			posY--
+			if posY < 0 {
+				posY = posY + height
+			}
+			posY = posY % height
 		case MOVE:
 			posX++
+			if posX >= width {
+				posX = posX + width
+			}
+			posX = posX % width
 		case MOVS:
 			posY++
+			if posY >= width {
+				posY = posY + height
+			}
+			posY = posY % height
 		case MOVW:
 			posX--
+			if posX < 0 {
+				posX = posX + width
+			}
+			posX = posX % width
 		case FLIP:
 			// Flip the bit at the current cell
-			if data[posY%height][posX%width] == 1 {
-				data[posY%height][posX%width] = 0
+			if data[posY][posX] == 1 {
+				data[posY][posX] = 0
 			} else {
-				data[posY%height][posX%width] = 1
+				data[posY][posX] = 1
 			}
 		case JMPP:
 			// Jump past matching ] if value at current cell is 0
-			if data[posY%height][posX%width] == 0 {
+			if data[posY][posX] == 0 {
 				level := 0
 				for i := srcp; i < len(src); i++ {
 					if src[i] == JMPP {
@@ -79,7 +95,7 @@ func Interpreter(code string, iterations, width, height int) string {
 			}
 		case JMPB:
 			// Jump back to matching [ (if value at current cell is nonzero)
-			if data[posY%height][posX%width] == 1 {
+			if data[posY][posX] == 1 {
 				level := 0
 				for i := len(src) - 1; i >= 0; i-- {
 					if src[i] == JMPB {

@@ -1,6 +1,6 @@
-package esolang_interpreters_number_3_custom_smallfuck_interpreter
+package esolang_interpreters_number_3_custom_paintf_star_star_k_interpreter
 
-// https://www.codewars.com/kata/58678d29dbca9a68d80000d7
+// https://www.codewars.com/kata/5868a68ba44cfc763e00008d
 
 import "testing"
 
