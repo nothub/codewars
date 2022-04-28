@@ -60,3 +60,43 @@ func Test5(t *testing.T) {
 	expected := "111100\r\n100010\r\n100001\r\n100010\r\n111100\r\n100000\r\n100000\r\n100000\r\n100000"
 	test(t, code, iterations, width, height, expected)
 }
+
+func Test6(t *testing.T) {
+	// Your interpreter should exit the loop at the correct conditions
+	code := "*[es*]"
+	iterations := 1000
+	width := 5
+	height := 6
+	expected := "01111\r\n11111\r\n11111\r\n11111\r\n11111\r\n11111"
+	test(t, code, iterations, width, height, expected)
+}
+
+func Test7(t *testing.T) {
+	// Your interpreter should should exhibit toroidal behaviour ;)
+	code := "*[es*]"
+	iterations := 37
+	width := 5
+	height := 6
+	expected := "11000\r\n01100\r\n00110\r\n00011\r\n00001\r\n10000"
+	test(t, code, iterations, width, height, expected)
+}
+
+func Test8(t *testing.T) {
+	// Your interpreter should also work with nested loops
+	code := "*[s[e]*]"
+	iterations := 23
+	width := 5
+	height := 5
+	expected := "11000\r\n10000\r\n10000\r\n10000\r\n10000"
+	test(t, code, iterations, width, height, expected)
+}
+
+func Test9(t *testing.T) {
+	// Your data grid should exhibit toroidal (wrapping) behaviour
+	code := "eee*s*s*s*w*w*w*w*w*w*w*n*n*n*n*n*n*n*n*n*e*e*e*e*e*e*e*s*s*s*s*s*"
+	iterations := 1000
+	width := 8
+	height := 10
+	expected := "00011000\r\n00011000\r\n00011000\r\n11111111\r\n11111111\r\n00011000\r\n00011000\r\n00011000\r\n00011000\r\n00011000"
+	test(t, code, iterations, width, height, expected)
+}
