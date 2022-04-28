@@ -1,0 +1,62 @@
+package esolang_interpreters_number_3_custom_smallfuck_interpreter
+
+// https://www.codewars.com/kata/58678d29dbca9a68d80000d7
+
+import "testing"
+
+func test(t *testing.T, code string, iterations, width, height int, expected string) {
+	actual := Interpreter(code, iterations, width, height)
+	if actual != expected {
+		t.Errorf("\ncode:       %s\niterations: %v\nwidth:      %v\nheight:     %v\nactual:\n%s\nexpected:\n%s", code, iterations, width, height, actual, expected)
+	}
+}
+
+func Test1(t *testing.T) {
+	// Your interpreter should initialize all cells in the datagrid to 0
+	code := "*e*e*e*es*es*ws*ws*w*w*w*n*n*n*ssss*s*s*s*"
+	iterations := 0
+	width := 6
+	height := 9
+	expected := "000000\r\n000000\r\n000000\r\n000000\r\n000000\r\n000000\r\n000000\r\n000000\r\n000000"
+	test(t, code, iterations, width, height, expected)
+}
+
+func Test2(t *testing.T) {
+	// Your interpreter should adhere to the number of iterations specified
+	code := "*e*e*e*es*es*ws*ws*w*w*w*n*n*n*ssss*s*s*s*"
+	iterations := 7
+	width := 6
+	height := 9
+	expected := "111100\r\n000000\r\n000000\r\n000000\r\n000000\r\n000000\r\n000000\r\n000000\r\n000000"
+	test(t, code, iterations, width, height, expected)
+}
+
+func Test3(t *testing.T) {
+	// Your interpreter should traverse the 2D datagrid correctly
+	code := "*e*e*e*es*es*ws*ws*w*w*w*n*n*n*ssss*s*s*s*"
+	iterations := 19
+	width := 6
+	height := 9
+	expected := "111100\r\n000010\r\n000001\r\n000010\r\n000100\r\n000000\r\n000000\r\n000000\r\n000000"
+	test(t, code, iterations, width, height, expected)
+}
+
+func Test4(t *testing.T) {
+	// Your interpreter should traverse the 2D datagrid correctly for all of the \"n\", \"e\", \"s\" and \"w\" commands
+	code := "*e*e*e*es*es*ws*ws*w*w*w*n*n*n*ssss*s*s*s*"
+	iterations := 42
+	width := 6
+	height := 9
+	expected := "111100\r\n100010\r\n100001\r\n100010\r\n111100\r\n100000\r\n100000\r\n100000\r\n100000"
+	test(t, code, iterations, width, height, expected)
+}
+
+func Test5(t *testing.T) {
+	// Your interpreter should terminate normally and return a representation of the final state of the 2D datagrid when all commands have been considered from left to right even if the number of iterations specified have not been fully performed
+	code := "*e*e*e*es*es*ws*ws*w*w*w*n*n*n*ssss*s*s*s*"
+	iterations := 100
+	width := 6
+	height := 9
+	expected := "111100\r\n100010\r\n100001\r\n100010\r\n111100\r\n100000\r\n100000\r\n100000\r\n100000"
+	test(t, code, iterations, width, height, expected)
+}
