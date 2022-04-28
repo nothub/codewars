@@ -43,7 +43,6 @@ func Interpreter(code string, iterations, width, height int) string {
 			log.Printf("exit: code pointer %v out of range\n", srcp)
 			break
 		}
-		printState(src, srcp)
 
 		switch src[srcp] {
 		case MOVN:
@@ -116,9 +115,6 @@ func Interpreter(code string, iterations, width, height int) string {
 		srcp++
 	}
 
-	log.Println("final state:")
-	printState(src, srcp)
-
 	var lines []string
 	for _, line := range data {
 		var l string
@@ -128,14 +124,4 @@ func Interpreter(code string, iterations, width, height int) string {
 		lines = append(lines, l)
 	}
 	return strings.Join(lines, separator)
-}
-
-func printState(src []string, srcp int) {
-	log.Printf("src=%v\n", strings.Join(src, ""))
-	pointer := "    "
-	for i := 0; i < srcp; i++ {
-		pointer = pointer + " "
-	}
-	log.Println(pointer + "^")
-	log.Println("----")
 }
