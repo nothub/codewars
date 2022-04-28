@@ -67,7 +67,7 @@ func Interpreter(code string, tape string) string {
 			// Jump back to matching [ (if value at current cell is nonzero)
 			if mem[memp] == ONE {
 				level := 0
-				for i := len(src) - 1; i >= srcp; i-- {
+				for i := len(src) - 1; i >= 0; i-- {
 					if src[i] == JMPB {
 						level++
 					} else if src[i] == JMPP {
