@@ -32,7 +32,7 @@ func Interpreter(code string, tape string) string {
 			log.Println("exit: tape pointer out of range")
 			break
 		}
-		printState(src, srcp, mem, memp)
+		//printState(src, srcp, mem, memp)
 		switch src[srcp] {
 		case MOVR:
 			// Move pointer to the right (by 1 cell)
@@ -57,7 +57,7 @@ func Interpreter(code string, tape string) string {
 					} else if src[i] == JMPB {
 						level--
 						if level == 0 {
-							srcp = i + 1
+							srcp = i
 							break
 						}
 					}
@@ -82,9 +82,13 @@ func Interpreter(code string, tape string) string {
 		}
 		srcp++
 	}
-	log.Println("final state:")
-	printState(src, srcp, mem, memp)
+	//log.Println("final state:")
+	//printState(src, srcp, mem, memp)
 	return strings.Join(mem, "")
+}
+
+func pointerValid(p int, a []string) bool {
+	return p >= 0 && p < len(a)
 }
 
 func printState(src []string, srcp int, mem []string, memp int) {
@@ -103,8 +107,4 @@ func printState(src []string, srcp int, mem []string, memp int) {
 	}
 	log.Println(pointer + "^")
 	log.Println("----")
-}
-
-func pointerValid(p int, a []string) bool {
-	return p >= 0 && p < len(a)
 }
