@@ -42,3 +42,24 @@ func TestMultiply(t *testing.T) {
 	expected := "\x48"
 	test(t, input, args, expected)
 }
+
+func TestPadding(t *testing.T) {
+	testPadding(t, 0, 0)
+	testPadding(t, 1, 8)
+	testPadding(t, 2, 8)
+	testPadding(t, 7, 8)
+	testPadding(t, 8, 8)
+	testPadding(t, 9, 16)
+	testPadding(t, 10, 16)
+	testPadding(t, 15, 16)
+	testPadding(t, 16, 16)
+	testPadding(t, 17, 24)
+	testPadding(t, 18, 24)
+}
+
+func testPadding(t *testing.T, input int, expected int) {
+	actual := paddedSize(make([]bool, input))
+	if actual != expected {
+		t.Errorf("FAIL\ninput:    %v\nactual:   %v\nexpected: %v", input, actual, expected)
+	}
+}
