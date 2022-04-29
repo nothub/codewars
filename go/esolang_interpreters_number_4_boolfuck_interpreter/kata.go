@@ -151,9 +151,9 @@ func paddedSize(bits []bool) int {
 	if fullBytes < 1 {
 		return 8
 	}
-	offset := size % (fullBytes * 8)
-	if offset == 0 {
+	diff := size % (fullBytes * 8)
+	if diff == 0 {
 		return size
 	}
-	return size + (8 - offset)
+	return size + (8 - diff)
 }
