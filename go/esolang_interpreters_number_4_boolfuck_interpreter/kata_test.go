@@ -25,7 +25,7 @@ func assertSame(a []bool, b []bool) bool {
 func test(t *testing.T, code string, args string, expected string) {
 	actual := Boolfuck(code, args)
 	if actual != expected {
-		t.Errorf("FAIL\ncode:     %s\nargs:     %s\nactual:   %s\nexpected: %s", code, args, actual, expected)
+		t.Errorf("FAIL\ncode:     %s\nargs:     %s\nactual:   %v\nexpected: %v\nactual:   %x\nexpected: %x", code, args, actual, expected, actual, expected)
 	}
 }
 
@@ -127,8 +127,8 @@ func TestTrimFrontRune(t *testing.T) {
 }
 
 func TestDebug(t *testing.T) {
-	input := ",,,,,,,, ,,,,,,,, ,,,,,,,, ,,,,,,,,"
+	input := ",;,;,;,;,;,;,;,; ,;,;,;,;,;,;,;,; ,;,;,;,;,;,;,;,; ,;,;,;,;,;,;,;,;"
 	args := "axy"
-	expected := ""
+	expected := "axy"
 	test(t, input, args, expected)
 }
