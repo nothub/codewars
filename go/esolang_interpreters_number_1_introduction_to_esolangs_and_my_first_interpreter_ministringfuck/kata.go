@@ -14,9 +14,7 @@ func Interpreter(code string) string {
 		switch r {
 		case "+":
 			mem++
-			if mem >= 256 {
-				mem = 0
-			}
+			mem = mem % 256
 		case ".":
 			out = out + string(rune(mem))
 		default:
