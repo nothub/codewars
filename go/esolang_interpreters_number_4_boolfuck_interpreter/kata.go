@@ -57,12 +57,10 @@ func Boolfuck(code, input string) string {
 	tape := newTape()
 	var bufI []bool
 	var bufO []bool
-
 	for {
 		if !prog.pointerValid() {
 			break
 		}
-
 		switch prog.read() {
 		case FLIP:
 			if tape.read() == false {
@@ -74,18 +72,16 @@ func Boolfuck(code, input string) string {
 			// reads a bit from the input stream, storing it under the pointer.
 			// 'a' -> [ 1 0 0 0 0 1 1 0 ] (little-endian)
 			if len(bufI) == 0 && len(input) == 0 {
-				// reached end-of-file
 				tape.write(false)
 				break
 			}
 			if len(bufI) == 0 && len(input) > 0 {
-				// refill input buffer
 				head := input[:1]
 				input = input[1:]
 				bufI = toBits(head[0])
 			}
-			head, body := behead(bufI)
-			bufI = body
+			head := bufI[:1]
+			bufI = bufI[1:]
 			tape.write(head[0])
 		case PRNT:
 			bufO = append(bufO, tape.read())
@@ -192,28 +188,3 @@ func toByte(bools []bool) byte {
 	}
 	return b
 }
-
-func behead(bits []bool) ([]bool, []bool) {
-	if len(bits) == 0 {
-		return []bool{}, []bool{}
-	}
-	if len(bits) == 1 {
-		return bits[:1], []bool{}
-	}
-	return bits[:1], bits[1:]
-}
-
-//func behead[T any](arr []T) ([]T, []T) {
-//    if len(arr) == 0 {
-//        return []T{}, []T{}
-//    }
-//    if len(arr) == 1 {
-//        return arr[:1], []T{}
-//    }
-//    return arr[:1], arr[1:]
-//}
-//
-//func beheadString(s string) (string, string) {
-//    head, body := behead(strings.Split(s, ""))
-//    return strings.Join(head, ""), strings.Join(body, "")
-//}
