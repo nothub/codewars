@@ -3,7 +3,9 @@ package esolang_interpreters_number_4_boolfuck_interpreter
 // https://www.codewars.com/kata/5861487fdb20cff3ab000030
 
 import (
+	"fmt"
 	"log"
+	"regexp"
 	"strings"
 )
 
@@ -74,13 +76,12 @@ func (tape tape) write(b bool) {
 }
 
 func Boolfuck(code, input string) string {
+	btoi := map[bool]int{true: 1}
+
+	code = regexp.MustCompile(`[^+,;<>[\]]`).ReplaceAllString(code, "") // strip comments
 	src := strings.Split(code, "")
 	srcp := 0
 	tape := newTape()
-
-	//btoi := map[bool]int{true: 1}
-	//fmt.Printf("%v%v\n", btoi[true], btoi[false])
-
 	var bufi []bool
 	var bufo []bool
 
@@ -89,6 +90,14 @@ func Boolfuck(code, input string) string {
 			log.Println("exit: code pointer out of range")
 			break
 		}
+
+		fmt.Println(code)
+		fmt.Printf("%s%s\n", strings.Repeat(" ", srcp), "^")
+		for _, b := range tape.memory {
+			fmt.Printf("%v", btoi[b])
+		}
+		fmt.Printf("\n%s%s\n", strings.Repeat(" ", tape.pointer), "^")
+
 		switch src[srcp] {
 		case FLIP:
 			flip(tape)
@@ -183,18 +192,7 @@ func movr(t *tape) {
 // If the value under the pointer is 0 then skip to the corresponding ]
 func jmpp(src []string, srcp int, t *tape) int {
 	if t.read() == false {
-		level := 0
-		for i := srcp; i < len(src); i++ {
-			if src[i] == JMPP {
-				level++
-			} else if src[i] == JMPB {
-				level--
-				if level == 0 {
-					srcp = i
-					break
-				}
-			}
-		}
+		srcp = findRelatedBrace(srcp, src, JMPP, JMPB)
 	}
 	return srcp
 }
@@ -202,16 +200,20 @@ func jmpp(src []string, srcp int, t *tape) int {
 // Jumps back to the matching [ character, if the value under the pointer is 1
 func jmpb(src []string, srcp int, t *tape) int {
 	if t.read() == true {
-		level := 0
-		for i := len(src) - 1; i >= 0; i-- {
-			if src[i] == JMPB {
-				level++
-			} else if src[i] == JMPP {
-				level--
-				if level == 0 {
-					srcp = i
-					break
-				}
+		srcp = findRelatedBrace(srcp, src, JMPB, JMPP)
+	}
+	return srcp
+}
+
+func findRelatedBrace(srcp int, src []string, thisType string, otherType string) int {
+	level := 0
+	for i := srcp + 1; i < len(src); i++ {
+		if src[i] == thisType {
+			level++
+		} else if src[i] == otherType {
+			level--
+			if level == 0 {
+				return i
 			}
 		}
 	}

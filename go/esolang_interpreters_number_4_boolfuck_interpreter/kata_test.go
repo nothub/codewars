@@ -126,8 +126,15 @@ func TestTrimFrontRune(t *testing.T) {
 	}
 }
 
+func TestRelatedBrace(t *testing.T) {
+	input := "+[;>;;;;<;;>;][;>;;;;<;;>;]"
+	args := ""
+	expected := "a"
+	test(t, input, args, expected)
+}
+
 func TestDebug(t *testing.T) {
-	input := ",;,;,;,;,;,;,;,; ,;,;,;,;,;,;,;,; ,;,;,;,;,;,;,;,; ,;,;,;,;,;,;,;,;"
+	input := ",;,;,;,;,;,;,;,; ,;,;,;,;,;,;,;,; ,;,;,;,;,;,;,;,;"
 	args := "axy"
 	expected := "axy"
 	test(t, input, args, expected)
