@@ -126,10 +126,17 @@ func TestTrimFrontRune(t *testing.T) {
 	}
 }
 
-func TestRelatedBrace(t *testing.T) {
+func TestRelatedBrace1(t *testing.T) {
 	input := "+[;>;;;;<;;>;][;>;;;;<;;>;]"
 	args := ""
 	expected := "a"
+	test(t, input, args, expected)
+}
+
+func TestRelatedBrace2(t *testing.T) {
+	input := "+<[;>;;;;<;;>;]"
+	args := ""
+	expected := ""
 	test(t, input, args, expected)
 }
 
