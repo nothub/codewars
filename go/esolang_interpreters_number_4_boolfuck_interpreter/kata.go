@@ -3,7 +3,6 @@ package esolang_interpreters_number_4_boolfuck_interpreter
 // https://www.codewars.com/kata/5861487fdb20cff3ab000030
 
 import (
-	"fmt"
 	"log"
 	"strings"
 )
@@ -79,8 +78,8 @@ func Boolfuck(code, input string) string {
 	srcp := 0
 	tape := newTape()
 
-	btoi := map[bool]int{true: 1}
-	fmt.Printf("%v%v\n", btoi[true], btoi[false])
+	//btoi := map[bool]int{true: 1}
+	//fmt.Printf("%v%v\n", btoi[true], btoi[false])
 
 	var bufi []bool
 	var bufo []bool
@@ -145,10 +144,14 @@ func Boolfuck(code, input string) string {
 		padded[i] = bufo[i]
 	}
 
-	// var byts []byte
-	// for i := range padded {}
+	var out []byte
+	for i := 0; i < len(padded); i = i + 8 {
+		bits := padded[:8]
+		padded = padded[8:]
+		out = append(out, toByte(bits))
+	}
 
-	return ""
+	return string(out)
 }
 
 // Flips the value of the bit under the pointer
