@@ -69,20 +69,18 @@ func Boolfuck(code, input string) string {
 				tape.write(false)
 			}
 		case READ:
-			// reads a bit from the input stream, storing it under the pointer.
-			// 'a' -> [ 1 0 0 0 0 1 1 0 ] (little-endian)
 			if len(bufI) == 0 && len(input) == 0 {
 				tape.write(false)
 				break
 			}
 			if len(bufI) == 0 && len(input) > 0 {
-				head := input[:1]
+				head := input[0]
 				input = input[1:]
-				bufI = toBits(head[0])
+				bufI = toBits(head)
 			}
-			head := bufI[:1]
+			head := bufI[0]
 			bufI = bufI[1:]
-			tape.write(head[0])
+			tape.write(head)
 		case PRNT:
 			bufO = append(bufO, tape.read())
 		case MOVL:
@@ -103,19 +101,14 @@ func Boolfuck(code, input string) string {
 		}
 		prog.pointer++
 	}
-
 	padded := make([]bool, paddedSize(bufO))
-	for i := range bufO {
-		padded[i] = bufO[i]
-	}
-
+	copy(padded, bufO)
 	var out []byte
 	for len(padded) > 0 {
 		bits := padded[:8]
 		padded = padded[8:]
 		out = append(out, toByte(bits))
 	}
-
 	return string(out)
 }
 
@@ -155,6 +148,24 @@ func jmpb(prog *prog, t *tape) {
 	}
 }
 
+func toBits(b byte) []bool {
+	buf := make([]bool, 8)
+	for i := 0; i < 8; i++ {
+		buf[i] = (b>>byte(i))&1 > 0
+	}
+	return buf
+}
+
+func toByte(b []bool) byte {
+	var buf byte
+	for i := 0; i < 8; i++ {
+		if b[i] {
+			buf = buf | (1 << byte(i))
+		}
+	}
+	return buf
+}
+
 func paddedSize(bits []bool) int {
 	size := len(bits)
 	if size == 0 {
@@ -169,22 +180,4 @@ func paddedSize(bits []bool) int {
 		return size
 	}
 	return size + (8 - diff)
-}
-
-func toBits(b byte) []bool {
-	bits := make([]bool, 8)
-	for i := 0; i < 8; i++ {
-		bits[i] = (b>>byte(i))&1 > 0
-	}
-	return bits
-}
-
-func toByte(bools []bool) byte {
-	var b byte
-	for i := 0; i < 8; i++ {
-		if bools[i] {
-			b = b | (1 << byte(i))
-		}
-	}
-	return b
 }
