@@ -250,7 +250,7 @@ func paddedSize(bits []bool) int {
 func toBits(b byte) []bool {
 	bits := make([]bool, 8)
 	for i := 0; i < 8; i++ {
-		bits[i] = (b>>i)&1 > 0
+		bits[i] = (b>>byte(i))&1 > 0
 	}
 	return bits
 }
@@ -259,7 +259,7 @@ func toByte(bools []bool) byte {
 	var b byte
 	for i := 0; i < 8; i++ {
 		if bools[i] {
-			b = b | (1 << i)
+			b = b | (1 << byte(i))
 		}
 	}
 	return b
