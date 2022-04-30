@@ -4,8 +4,26 @@ package esolang_interpreters_number_4_boolfuck_interpreter
 
 import "testing"
 
+func assertSame(a []bool, b []bool) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil || b == nil {
+		return false
+	}
+	if len(a) != len(b) {
+		return false
+	}
+	for i := 0; i < len(a); i++ {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func test(t *testing.T, code string, args string, expected string) {
-	actual := Boolfuck(code, "")
+	actual := Boolfuck(code, args)
 	if actual != expected {
 		t.Errorf("FAIL\ncode:     %s\nargs:     %s\nactual:   %s\nexpected: %s", code, args, actual, expected)
 	}
@@ -57,9 +75,60 @@ func TestPadding(t *testing.T) {
 	testPadSize(t, 18, 24)
 }
 
+func TestBytesToBits(t *testing.T) {
+	// 'a' -> [ 1, 0, 0, 0, 0, 1, 1, 0 ] (little-endian order)
+	actual := toBits(byte('a'))
+	expected := []bool{true, false, false, false, false, true, true, false}
+	if !assertSame(actual, expected) {
+		t.Errorf("FAIL\nactual:   %v\nexpected: %v", actual, expected)
+	}
+}
+
+func TestBitsToByte(t *testing.T) {
+	// 'a' -> [ 1, 0, 0, 0, 0, 1, 1, 0 ] (little-endian order)
+	actual := toByte([]bool{true, false, false, false, false, true, true, false})
+	expected := byte('a')
+	if actual != expected {
+		t.Errorf("FAIL\nactual:   %v\nexpected: %v", actual, expected)
+	}
+}
+
 func testPadSize(t *testing.T, input int, expected int) {
 	actual := paddedSize(make([]bool, input))
 	if actual != expected {
 		t.Errorf("FAIL\ninput:    %v\nactual:   %v\nexpected: %v", input, actual, expected)
 	}
+}
+
+func TestTrimFrontRune(t *testing.T) {
+	r, s := behead("asdf")
+	if r != "a" {
+		t.Errorf("FAIL\n")
+	}
+	if s != "sdf" {
+		t.Errorf("FAIL\n")
+	}
+
+	r, s = behead("a")
+	if r != "a" {
+		t.Errorf("FAIL\n")
+	}
+	if s != "" {
+		t.Errorf("FAIL\n")
+	}
+
+	r, s = behead("")
+	if r != "" {
+		t.Errorf("FAIL\n")
+	}
+	if s != "" {
+		t.Errorf("FAIL\n")
+	}
+}
+
+func TestDebug(t *testing.T) {
+	input := ",,,,,,,, ,,,,,,,, ,,,,,,,, ,,,,,,,,"
+	args := "axy"
+	expected := ""
+	test(t, input, args, expected)
 }
