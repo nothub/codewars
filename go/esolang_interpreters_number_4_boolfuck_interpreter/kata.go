@@ -3,8 +3,6 @@ package esolang_interpreters_number_4_boolfuck_interpreter
 // https://www.codewars.com/kata/5861487fdb20cff3ab000030
 
 import (
-	"fmt"
-	"log"
 	"regexp"
 	"strings"
 )
@@ -86,7 +84,6 @@ func Boolfuck(code, input string) string {
 
 	for {
 		if !pointerValid(srcp, src) {
-			log.Println("exit: code pointer out of range")
 			break
 		}
 
@@ -187,7 +184,6 @@ func jmpb(src []string, srcp int, t *tape) int {
 				}
 			}
 		}
-		fmt.Printf("%v\n", level)
 	}
 	return srcp
 }
