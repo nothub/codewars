@@ -111,7 +111,7 @@ func Boolfuck(code, input string) string {
 				bufi = toBits(([]byte(head))[0])
 			}
 
-			head, body := behead(bufi)
+			head, body := beheadBools(bufi)
 			bufi = body
 
 			tape.write(head[0])
@@ -226,17 +226,37 @@ func toByte(bools []bool) byte {
 	return b
 }
 
-func behead[T any](arr []T) ([]T, []T) {
-	if len(arr) == 0 {
-		return []T{}, []T{}
+func beheadBools(bits []bool) ([]bool, []bool) {
+	if len(bits) == 0 {
+		return []bool{}, []bool{}
 	}
-	if len(arr) == 1 {
-		return arr[:1], []T{}
+	if len(bits) == 1 {
+		return bits[:1], []bool{}
 	}
-	return arr[:1], arr[1:]
+	return bits[:1], bits[1:]
 }
 
-func beheadString(s string) (string, string) {
-	head, body := behead(strings.Split(s, ""))
-	return strings.Join(head, ""), strings.Join(body, "")
+func beheadString(str string) (string, string) {
+	if len(str) == 0 {
+		return "", ""
+	}
+	if len(str) == 1 {
+		return str[:1], ""
+	}
+	return str[:1], str[1:]
 }
+
+//func behead[T any](arr []T) ([]T, []T) {
+//    if len(arr) == 0 {
+//        return []T{}, []T{}
+//    }
+//    if len(arr) == 1 {
+//        return arr[:1], []T{}
+//    }
+//    return arr[:1], arr[1:]
+//}
+//
+//func beheadString(s string) (string, string) {
+//    head, body := behead(strings.Split(s, ""))
+//    return strings.Join(head, ""), strings.Join(body, "")
+//}
