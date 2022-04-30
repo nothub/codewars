@@ -84,16 +84,7 @@ func Boolfuck(code, input string) string {
 	var bufi []bool
 	var bufo []bool
 
-	//btoi := map[bool]int{true: 1}
 	for {
-		//fmt.Println(code)
-		//fmt.Printf("%s%s\n", strings.Repeat(" ", srcp), "^")
-		//for _, b := range tape.memory {
-		//	fmt.Printf("%v", btoi[b])
-		//}
-		//fmt.Printf("\n%s%s\n", strings.Repeat(" ", tape.pointer), "^")
-		//fmt.Printf("---\n")
-
 		if !pointerValid(srcp, src) {
 			log.Println("exit: code pointer out of range")
 			break
@@ -101,7 +92,11 @@ func Boolfuck(code, input string) string {
 
 		switch src[srcp] {
 		case FLIP:
-			flip(tape)
+			if tape.read() == false {
+				tape.write(true)
+			} else {
+				tape.write(false)
+			}
 		case READ:
 			// reads a bit from the input stream, storing it under the pointer.
 			// 'a' -> [ 1 0 0 0 0 1 1 0 ] (little-endian)
@@ -116,12 +111,7 @@ func Boolfuck(code, input string) string {
 			if len(bufi) == 0 {
 				head, body := behead(input)
 				input = body
-
-				headBytes := []byte(head) // TODO: inline after testing
-				if len(headBytes) != 1 {
-					log.Fatalln("!!!", "HEAD BYTES LEN WAS:", len(head), "!!!")
-				}
-				bufi = toBits(headBytes[0])
+				bufi = toBits(([]byte(head))[0])
 			}
 
 			head, body := beheadBools(bufi)
@@ -130,13 +120,18 @@ func Boolfuck(code, input string) string {
 			tape.write(head[0])
 
 		case PRNT:
-			// Outputs the bit under the pointer to the output stream.
-			// The bits get output in little-endian order, the same order in which they would be input.
 			bufo = append(bufo, tape.read())
 		case MOVL:
-			movl(tape)
+			if tape.pointer == 0 {
+				tape.memory = append([]bool{false}, tape.memory...)
+				tape.pointer++
+			}
+			tape.pointer--
 		case MOVR:
-			movr(tape)
+			if tape.pointer == len(tape.memory)-1 {
+				tape.memory = append(tape.memory, false)
+			}
+			tape.pointer++
 		case JMPP:
 			srcp = jmpp(src, srcp, tape)
 		case JMPB:
@@ -144,10 +139,6 @@ func Boolfuck(code, input string) string {
 		}
 		srcp++
 	}
-
-	// TODO: Your interpreter should return the output as actual characters (not bits!) as a string.
-	// If the total number of bits output is not a multiple of eight at the end of the program,
-	// the last character of output gets padded with zeros on the more significant end.
 
 	padded := make([]bool, paddedSize(bufo))
 	for i := range bufo {
@@ -162,32 +153,6 @@ func Boolfuck(code, input string) string {
 	}
 
 	return string(out)
-}
-
-// Flips the value of the bit under the pointer
-func flip(t *tape) {
-	if t.read() == false {
-		t.write(true)
-	} else {
-		t.write(false)
-	}
-}
-
-// Moves the pointer left by 1 bit
-func movl(t *tape) {
-	if t.pointer == 0 {
-		t.memory = append([]bool{false}, t.memory...)
-		t.pointer++
-	}
-	t.pointer--
-}
-
-// Moves the pointer right by 1 bit
-func movr(t *tape) {
-	if t.pointer == len(t.memory)-1 {
-		t.memory = append(t.memory, false)
-	}
-	t.pointer++
 }
 
 // If the value under the pointer is 0 then skip to the corresponding ]
@@ -263,20 +228,6 @@ func toByte(bools []bool) byte {
 		}
 	}
 	return b
-}
-
-func flipBits(bits []bool) []bool {
-	// flip by swapping
-	i := 0
-	j := len(bits) - 1
-	for i < j {
-		swap := bits[i]
-		bits[i] = bits[j]
-		bits[j] = swap
-		i++
-		j--
-	}
-	return bits
 }
 
 func behead(s string) (string, string) {
