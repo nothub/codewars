@@ -100,32 +100,6 @@ func testPadSize(t *testing.T, input int, expected int) {
 	}
 }
 
-func TestTrimFrontRune(t *testing.T) {
-	r, s := beheadString("asdf")
-	if r != "a" {
-		t.Errorf("FAIL\n")
-	}
-	if s != "sdf" {
-		t.Errorf("FAIL\n")
-	}
-
-	r, s = beheadString("a")
-	if r != "a" {
-		t.Errorf("FAIL\n")
-	}
-	if s != "" {
-		t.Errorf("FAIL\n")
-	}
-
-	r, s = beheadString("")
-	if r != "" {
-		t.Errorf("FAIL\n")
-	}
-	if s != "" {
-		t.Errorf("FAIL\n")
-	}
-}
-
 func TestRelatedBrace1(t *testing.T) {
 	input := "+[;>;;;;<;;>;][;>;;;;<;;>;]"
 	args := ""

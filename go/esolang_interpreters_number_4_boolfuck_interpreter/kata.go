@@ -7,38 +7,33 @@ import (
 	"strings"
 )
 
-// In UTF-8, characters from the U+0000..U+10FFFF range (the UTF-16 accessible range)
-// are encoded using sequences of 1 to 4 octets (bytes). (see: https://www.rfc-editor.org/rfc/rfc3629#section-3)
-
 const (
-	// FLIP Flips the value of the bit under the pointer
 	FLIP = "+"
-
-	// READ Reads a bit from the input stream, storing it under the pointer.
-	// The end-user types information using characters, though.
-	// Bytes are read in little-endian order—the first bit read from the character a,
-	// for instance, is 1, followed by 0, 0, 0, 0, 1, 1, and finally 0.
-	// If the end-of-file has been reached, outputs a zero to the bit under the pointer.
 	READ = ","
-
-	// PRNT Outputs the bit under the pointer to the output stream.
-	// The bits get output in little-endian order, the same order in which they would be input.
-	// If the total number of bits output is not a multiple of eight at the end of the program,
-	// the last character of output gets padded with zeros on the more significant end.
 	PRNT = ";"
-
-	// MOVL Moves the pointer left by 1 bit
 	MOVL = "<"
-
-	// MOVR Moves the pointer right by 1 bit
 	MOVR = ">"
-
-	// JMPP If the value under the pointer is 0 then skip to the corresponding ]
 	JMPP = "["
-
-	// JMPB Jumps back to the matching [ character, if the value under the pointer is 1
 	JMPB = "]"
 )
+
+type prog struct {
+	code    []string
+	pointer int
+}
+
+func newProg(code string) *prog {
+	code = regexp.MustCompile(`[^+,;<>[\]]`).ReplaceAllString(code, "") // strip comments
+	return &prog{code: strings.Split(code, ""), pointer: 0}
+}
+
+func (prog prog) read() string {
+	return prog.code[prog.pointer]
+}
+
+func (prog prog) pointerValid() bool {
+	return prog.pointer >= 0 && prog.pointer < len(prog.code)
+}
 
 type tape struct {
 	memory  []bool
@@ -46,23 +41,7 @@ type tape struct {
 }
 
 func newTape() *tape {
-	t := tape{memory: []bool{false}, pointer: 0}
-	return &t
-}
-
-// add element to tapes left side
-func (tape tape) prepend(b bool) {
-	tape.memory = append([]bool{b}, tape.memory...)
-	tape.pointer++
-}
-
-// add element to tapes right side
-func (tape tape) append(b bool) {
-	tape.memory = append(tape.memory, b)
-}
-
-func (tape tape) size() int {
-	return len(tape.memory)
+	return &tape{memory: []bool{false}, pointer: 0}
 }
 
 func (tape tape) read() bool {
@@ -74,20 +53,17 @@ func (tape tape) write(b bool) {
 }
 
 func Boolfuck(code, input string) string {
-
-	code = regexp.MustCompile(`[^+,;<>[\]]`).ReplaceAllString(code, "") // strip comments
-	src := strings.Split(code, "")
-	srcp := 0
+	prog := newProg(code)
 	tape := newTape()
-	var bufi []bool
-	var bufo []bool
+	var bufI []bool
+	var bufO []bool
 
 	for {
-		if !pointerValid(srcp, src) {
+		if !prog.pointerValid() {
 			break
 		}
 
-		switch src[srcp] {
+		switch prog.read() {
 		case FLIP:
 			if tape.read() == false {
 				tape.write(true)
@@ -97,27 +73,22 @@ func Boolfuck(code, input string) string {
 		case READ:
 			// reads a bit from the input stream, storing it under the pointer.
 			// 'a' -> [ 1 0 0 0 0 1 1 0 ] (little-endian)
-
-			// if the end-of-file has been reached, outputs a zero to the bit under the pointer
-			if len(bufi) == 0 && len(input) == 0 {
+			if len(bufI) == 0 && len(input) == 0 {
+				// reached end-of-file
 				tape.write(false)
 				break
 			}
-
-			// refill input buffer when empty
-			if len(bufi) == 0 {
-				head, body := beheadString(input)
-				input = body
-				bufi = toBits(([]byte(head))[0])
+			if len(bufI) == 0 && len(input) > 0 {
+				// refill input buffer
+				head := input[:1]
+				input = input[1:]
+				bufI = toBits(head[0])
 			}
-
-			head, body := beheadBools(bufi)
-			bufi = body
-
+			head, body := behead(bufI)
+			bufI = body
 			tape.write(head[0])
-
 		case PRNT:
-			bufo = append(bufo, tape.read())
+			bufO = append(bufO, tape.read())
 		case MOVL:
 			if tape.pointer == 0 {
 				tape.memory = append([]bool{false}, tape.memory...)
@@ -130,16 +101,16 @@ func Boolfuck(code, input string) string {
 			}
 			tape.pointer++
 		case JMPP:
-			srcp = jmpp(src, srcp, tape)
+			jmpp(prog, tape)
 		case JMPB:
-			srcp = jmpb(src, srcp, tape)
+			jmpb(prog, tape)
 		}
-		srcp++
+		prog.pointer++
 	}
 
-	padded := make([]bool, paddedSize(bufo))
-	for i := range bufo {
-		padded[i] = bufo[i]
+	padded := make([]bool, paddedSize(bufO))
+	for i := range bufO {
+		padded[i] = bufO[i]
 	}
 
 	var out []byte
@@ -153,43 +124,39 @@ func Boolfuck(code, input string) string {
 }
 
 // If the value under the pointer is 0 then skip to the corresponding ]
-func jmpp(src []string, srcp int, t *tape) int {
+func jmpp(prog *prog, t *tape) {
 	if t.read() == false {
 		level := 0
-		for i := srcp; i < len(src); i++ {
-			if src[i] == JMPP {
+		for i := prog.pointer; i < len(prog.code); i++ {
+			if prog.code[i] == JMPP {
 				level++
-			} else if src[i] == JMPB {
+			} else if prog.code[i] == JMPB {
 				level--
 				if level == 0 {
-					return i - 1
+					prog.pointer = i - 1
+					return
 				}
 			}
 		}
 	}
-	return srcp
 }
 
 // Jumps back to the matching [ character, if the value under the pointer is 1
-func jmpb(src []string, srcp int, t *tape) int {
+func jmpb(prog *prog, t *tape) {
 	if t.read() == true {
 		level := 0
-		for i := srcp; i >= 0; i-- {
-			if src[i] == JMPB {
+		for i := prog.pointer; i >= 0; i-- {
+			if prog.code[i] == JMPB {
 				level++
-			} else if src[i] == JMPP {
+			} else if prog.code[i] == JMPP {
 				level--
 				if level == 0 {
-					return i - 1
+					prog.pointer = i - 1
+					return
 				}
 			}
 		}
 	}
-	return srcp
-}
-
-func pointerValid(p int, a []string) bool {
-	return p >= 0 && p < len(a)
 }
 
 func paddedSize(bits []bool) int {
@@ -226,7 +193,7 @@ func toByte(bools []bool) byte {
 	return b
 }
 
-func beheadBools(bits []bool) ([]bool, []bool) {
+func behead(bits []bool) ([]bool, []bool) {
 	if len(bits) == 0 {
 		return []bool{}, []bool{}
 	}
@@ -234,16 +201,6 @@ func beheadBools(bits []bool) ([]bool, []bool) {
 		return bits[:1], []bool{}
 	}
 	return bits[:1], bits[1:]
-}
-
-func beheadString(str string) (string, string) {
-	if len(str) == 0 {
-		return "", ""
-	}
-	if len(str) == 1 {
-		return str[:1], ""
-	}
-	return str[:1], str[1:]
 }
 
 //func behead[T any](arr []T) ([]T, []T) {
