@@ -106,12 +106,12 @@ func Boolfuck(code, input string) string {
 
 			// refill input buffer when empty
 			if len(bufi) == 0 {
-				head, body := behead(input)
+				head, body := beheadString(input)
 				input = body
 				bufi = toBits(([]byte(head))[0])
 			}
 
-			head, body := beheadBools(bufi)
+			head, body := behead(bufi)
 			bufi = body
 
 			tape.write(head[0])
@@ -226,22 +226,17 @@ func toByte(bools []bool) byte {
 	return b
 }
 
-func behead(s string) (string, string) {
-	if len(s) == 0 {
-		return "", ""
+func behead[T any](arr []T) ([]T, []T) {
+	if len(arr) == 0 {
+		return []T{}, []T{}
 	}
-	if len(s) == 1 {
-		return s[:1], ""
+	if len(arr) == 1 {
+		return arr[:1], []T{}
 	}
-	return s[:1], s[1:]
+	return arr[:1], arr[1:]
 }
 
-func beheadBools(bools []bool) ([]bool, []bool) {
-	if len(bools) == 0 {
-		return []bool{}, []bool{}
-	}
-	if len(bools) == 1 {
-		return bools[:1], []bool{}
-	}
-	return bools[:1], bools[1:]
+func beheadString(s string) (string, string) {
+	head, body := behead(strings.Split(s, ""))
+	return strings.Join(head, ""), strings.Join(body, "")
 }

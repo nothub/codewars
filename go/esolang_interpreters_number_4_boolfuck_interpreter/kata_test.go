@@ -101,7 +101,7 @@ func testPadSize(t *testing.T, input int, expected int) {
 }
 
 func TestTrimFrontRune(t *testing.T) {
-	r, s := behead("asdf")
+	r, s := beheadString("asdf")
 	if r != "a" {
 		t.Errorf("FAIL\n")
 	}
@@ -109,7 +109,7 @@ func TestTrimFrontRune(t *testing.T) {
 		t.Errorf("FAIL\n")
 	}
 
-	r, s = behead("a")
+	r, s = beheadString("a")
 	if r != "a" {
 		t.Errorf("FAIL\n")
 	}
@@ -117,7 +117,7 @@ func TestTrimFrontRune(t *testing.T) {
 		t.Errorf("FAIL\n")
 	}
 
-	r, s = behead("")
+	r, s = beheadString("")
 	if r != "" {
 		t.Errorf("FAIL\n")
 	}
