@@ -31,7 +31,7 @@ func test(t *testing.T, code string, args string, expected string) {
 
 func TestHelloWorld(t *testing.T) {
 	// Your interpreter did not work with the code example provided on the official website
-	input := ";;;+;+;;+;+;\n+;+;+;+;;+;;+;\n;;+;;+;+;;+;\n;;+;;+;+;;+;\n+;;;;+;+;;+;\n;;+;;+;+;+;;\n;;;;;+;+;;\n+;;;+;+;;;+;\n+;;;;+;+;;+;\n;+;+;;+;;;+;\n;;+;;+;+;;+;\n;;+;+;;+;;+;\n+;+;;;;+;+;;\n;+;+;+;"
+	input := ";;;+;+;;+;+; +;+;+;+;;+;;+; ;;+;;+;+;;+; ;;+;;+;+;;+; +;;;;+;+;;+; ;;+;;+;+;+;; ;;;;;+;+;; +;;;+;+;;;+; +;;;;+;+;;+; ;+;+;;+;;;+; ;;+;;+;+;;+; ;;+;+;;+;;+; +;+;;;;+;+;; ;+;+;+;"
 	args := ""
 	expected := "Hello, world!\n"
 	test(t, input, args, expected)

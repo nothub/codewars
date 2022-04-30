@@ -145,7 +145,7 @@ func Boolfuck(code, input string) string {
 	}
 
 	var out []byte
-	for i := 0; i < len(padded); i = i + 8 {
+	for len(padded) > 0 {
 		bits := padded[:8]
 		padded = padded[8:]
 		out = append(out, toByte(bits))
@@ -156,10 +156,10 @@ func Boolfuck(code, input string) string {
 
 // Flips the value of the bit under the pointer
 func flip(t *tape) {
-	if t.read() == true {
-		t.write(false)
-	} else {
+	if t.read() == false {
 		t.write(true)
+	} else {
+		t.write(false)
 	}
 }
 
