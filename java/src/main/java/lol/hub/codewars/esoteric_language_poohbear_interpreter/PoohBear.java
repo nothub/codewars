@@ -10,33 +10,57 @@ import static java.util.Map.entry;
  */
 public class PoohBear {
 
+    public static final Consumer<Memory> NOOP = m -> {
+    };
+
     static final Map<String, Consumer<Memory>> commands = Map.ofEntries(
-        entry("+", m -> { /* Add 1 to the current cell */ }),
-        entry("-", m -> { /* Subtract 1 from the current cell */ }),
-        entry(">", m -> { /* Move the cell pointer 1 space to the right */ }),
-        entry("<", m -> { /* Move the cell pointer 1 space to the left */ }),
-        entry("c", m -> { /* "Copy" the current cell */ }),
-        entry("p", m -> { /* Paste the "copied" cell into the current cell */ }),
-        entry("W", m -> { /* While the current cell is not equal to 0, jump to the corresponding E */ }),
-        entry("E", m -> { /* While the current cell is not equal to 1, jump to the corresponding W */ }),
-        entry("P", m -> { /* Output the current cell's value as ascii */ }),
-        entry("N", m -> { /* Output the current cell's value as an integer */ }),
-        entry("T", m -> { /* Multiply the current cell by 2 */ }),
-        entry("Q", m -> { /* Square the current cell */ }),
-        entry("U", m -> { /* Square root the current cell's value */ }),
-        entry("L", m -> { /* Add 2 to the current cell */ }),
-        entry("I", m -> { /* Subtract 2 from the current cell */ }),
-        entry("V", m -> { /* Divide the current cell by 2 */ }),
-        entry("A", m -> { /* Add the copied value to the current cell's value */ }),
-        entry("B", m -> { /* Subtract the copied value from the current cell's value */ }),
-        entry("Y", m -> { /* Multiply the current cell's value by the copied value */ }),
-        entry("D", m -> { /* Divide the current cell's value by the copied value. */ })
-    );
+        /* Add 1 to the current cell */
+        entry("+", m -> m.write(m.read() + 1)),
+        /* Subtract 1 from the current cell */
+        entry("-", m -> m.write(m.read() - 1)),
+        /* Move the cell pointer 1 space to the right */
+        entry(">", Memory::right),
+        /* Move the cell pointer 1 space to the left */
+        entry("<", Memory::left),
+        /* "Copy" the current cell */
+        entry("c", Memory::copy),
+        /* Paste the "copied" cell into the current cell */
+        entry("p", Memory::paste),
+        /* While the current cell is not equal to 0, jump to the corresponding E */
+        entry("W", Memory::jumpRight),
+        /* While the current cell is not equal to 1, jump to the corresponding W */
+        entry("E", Memory::jumpLeft),
+        /* Output the current cell's value as ascii */
+        entry("P", m -> m.appendBuffer(String.valueOf((char) m.read()))),
+        /* Output the current cell's value as an integer */
+        entry("N", m -> m.appendBuffer(String.valueOf(m.read()))),
+        /* Multiply the current cell by 2 */
+        entry("T", m -> m.write(m.read() * 2)),
+        /* Square the current cell */
+        entry("Q", m -> m.write(Math.pow(m.read(), 2))),
+        /* Square root the current cell's value */
+        entry("U", m -> m.write(Math.sqrt(m.read()))),
+        /* Add 2 to the current cell */
+        entry("L", m -> m.write(m.read() + 2)),
+        /* Subtract 2 from the current cell */
+        entry("I", m -> m.write(m.read() - 2)),
+        /* Divide the current cell by 2 */
+        entry("V", m -> m.write(m.read() / 2)),
+        /* Add the copied value to the current cell's value */
+        entry("A", m -> m.write(m.read() + m.clipboard())),
+        /* Subtract the copied value from the current cell's value */
+        entry("B", m -> m.write(m.read() - m.clipboard())),
+        /* Multiply the current cell's value by the copied value */
+        entry("Y", m -> m.write(m.read() * m.clipboard())),
+        /* Divide the current cell's value by the copied value. */
+        entry("D", m -> m.write(m.read() / m.clipboard())));
 
     public static String interpret(final String s) {
-    /* If the result of an operation isn't an int, round the result down to the nearest one.
-    Your interpreter should ignore any non-command characters in the code. */
-        return "";
+        Memory memory = new Memory();
+        for (String c : s.split("")) {
+            commands.getOrDefault(c, NOOP).accept(memory);
+        }
+        return memory.printBuffer();
     }
 
 }
