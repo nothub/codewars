@@ -1,8 +1,12 @@
 package lol.hub.codewars.esoteric_language_poohbear_interpreter;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 
@@ -24,9 +28,9 @@ public class PoohBear {
         /* Paste the "copied" cell into the current cell */
         entry("p", ctx -> ctx.memory().paste()),
         /* While the current cell is not equal to 0, jump to the corresponding E */
-        entry("W", ctx -> ctx.memory().jumpRight()),
+        entry("W", PoohBear::jumpRight),
         /* While the current cell is not equal to 1, jump to the corresponding W */
-        entry("E", ctx -> ctx.memory().jumpLeft()),
+        entry("E", PoohBear::jumpLeft),
         /* Output the current cell's value as ascii */
         entry("P", ctx -> ctx.memory().appendBuffer(String.valueOf((char) ctx.memory().read()))),
         /* Output the current cell's value as an integer */
@@ -52,14 +56,141 @@ public class PoohBear {
         /* Divide the current cell's value by the copied value. */
         entry("D", ctx -> ctx.memory().write(ctx.memory().read() / ctx.memory().clipboard())));
 
+    private static void jumpLeft(Context ctx) {
+        if (ctx.memory().read() == 1) return;
+        var level = 0;
+        for (int i = ctx.pointer.get(); i >= 0; i--) {
+            if (ctx.program.get(i).equals("E")) level++;
+            else if (ctx.program.get(i).equals("W")) {
+                level--;
+                if (level == 0) {
+                    ctx.pointer.set(i - 1);
+                    return;
+                }
+            }
+        }
+    }
+
+    private static void jumpRight(Context ctx) {
+        if (ctx.memory().read() == 0) return;
+        var level = 0;
+        for (int i = ctx.pointer.get(); i < ctx.program.size(); i++) {
+            if (ctx.program.get(i).equals("W")) level++;
+            else if (ctx.program.get(i).equals("E")) {
+                level--;
+                if (level == 0) {
+                    ctx.pointer.set(i - 1);
+                    return;
+                }
+            }
+        }
+    }
+
     public static String interpret(final String code) {
         Memory memory = new Memory();
-        String[] commands = code.split("");
+        List<String> program = Arrays.stream(code.split("")).filter(commands::containsKey).collect(Collectors.toUnmodifiableList());
         AtomicInteger pointer = new AtomicInteger();
-        while (pointer.get() >= 0 && pointer.get() < commands.length) {
-            Context ctx = new Context(memory, commands, pointer, commands[pointer.getAndIncrement()]);
-            PoohBear.commands.getOrDefault(ctx.instruction(), noop -> {}).accept(ctx);
+
+        while (pointer.get() >= 0 && pointer.get() < program.size()) {
+
+            System.out.println(String.join("", program));
+            System.out.println(" ".repeat(pointer.get()) + "^");
+            System.out.println(memory.pointer + " -> " + memory.cells);
+            System.out.println(memory.clipboard());
+            System.out.println("---");
+
+            Context ctx = new Context(memory, program, pointer, program.get(pointer.get()));
+            PoohBear.commands.getOrDefault(ctx.instruction(), noop -> {
+            }).accept(ctx);
+            pointer.getAndIncrement();
         }
+
+        System.out.println(String.join("", program));
+        System.out.println(" ".repeat(pointer.get()) + "^");
+        System.out.println(memory.pointer + " -> " + memory.cells);
+
         return memory.printBuffer();
+    }
+
+    public static class Context {
+        private final Memory memory;
+        private final List<String> program;
+        private final AtomicInteger pointer;
+        private final String instruction;
+
+        public Context(Memory memory, List<String> program, AtomicInteger pointer, String instruction) {
+            this.memory = memory;
+            this.program = program;
+            this.pointer = pointer;
+            this.instruction = instruction;
+        }
+
+        public Memory memory() {
+            return memory;
+        }
+
+        public List<String> program() {
+            return program;
+        }
+
+        public AtomicInteger pointer() {
+            return pointer;
+        }
+
+        public String instruction() {
+            return instruction;
+        }
+    }
+
+    public static class Memory {
+        private final Map<Integer, Byte> cells = new HashMap<>();
+        private final StringBuilder buffer = new StringBuilder();
+
+        private int pointer;
+        private int clipboard;
+
+        public void left() {
+            pointer--;
+        }
+
+        public void right() {
+            pointer++;
+        }
+
+        public int read() {
+            return Byte.toUnsignedInt(cells.getOrDefault(pointer, (byte) 0));
+        }
+
+        public void write(int value) {
+            value = ((value % 256) + 256) % 256;
+            if (value == 0) cells.remove(value);
+            cells.put(pointer, (byte) value);
+        }
+
+        public void write(double value) {
+            value = Math.min(Integer.MAX_VALUE, value);
+            value = Math.max(Integer.MIN_VALUE, value);
+            write((int) value);
+        }
+
+        public void copy() {
+            clipboard = read();
+        }
+
+        public void paste() {
+            write(clipboard);
+        }
+
+        public int clipboard() {
+            return clipboard;
+        }
+
+        public void appendBuffer(String s) {
+            buffer.append(s);
+        }
+
+        public String printBuffer() {
+            return buffer.toString();
+        }
     }
 }

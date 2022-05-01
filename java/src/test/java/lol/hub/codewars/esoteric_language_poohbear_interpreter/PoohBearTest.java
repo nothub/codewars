@@ -27,21 +27,21 @@ public class PoohBearTest {
 
     @Test
     public void MemoryTest1() {
-        Memory m = new Memory();
+        PoohBear.Memory m = new PoohBear.Memory();
         m.write(256);
         assertEquals(0, m.read());
     }
 
     @Test
     public void MemoryTest2() {
-        Memory m = new Memory();
+        PoohBear.Memory m = new PoohBear.Memory();
         m.write(42 + 256);
         assertEquals(42, m.read());
     }
 
     @Test
     public void MemoryTest3() {
-        Memory m = new Memory();
+        PoohBear.Memory m = new PoohBear.Memory();
         m.write(-1 + 256);
         assertEquals(255, m.read());
     }
