@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 
+// TODO: UNFINISHED
+
 /**
  * @see <a href="https://www.codewars.com/kata/59a9735a485a4d807f00008a">codewars.com</a>
  */
@@ -27,9 +29,9 @@ public class PoohBear {
         entry("c", ctx -> ctx.memory().copy()),
         /* Paste the "copied" cell into the current cell */
         entry("p", ctx -> ctx.memory().paste()),
-        /* While the current cell is not equal to 0, jump to the corresponding E */
+        /* While the current cell is equal to 0, jump to the corresponding E */
         entry("W", PoohBear::jumpRight),
-        /* While the current cell is not equal to 1, jump to the corresponding W */
+        /* While the current cell is equal to 1, jump to the corresponding W */
         entry("E", PoohBear::jumpLeft),
         /* Output the current cell's value as ascii */
         entry("P", ctx -> ctx.memory().appendBuffer(String.valueOf((char) ctx.memory().read()))),
@@ -56,8 +58,35 @@ public class PoohBear {
         /* Divide the current cell's value by the copied value. */
         entry("D", ctx -> ctx.memory().write(ctx.memory().read() / ctx.memory().clipboard())));
 
+    public static String interpret(final String code) {
+        Memory memory = new Memory();
+        List<String> program = Arrays.stream(code.split("")).filter(commands::containsKey).collect(Collectors.toUnmodifiableList());
+        AtomicInteger pointer = new AtomicInteger();
+
+        while (pointer.get() >= 0 && pointer.get() < program.size()) {
+            printState(memory, program, pointer);
+            System.out.println("---");
+            Context ctx = new Context(memory, program, pointer, program.get(pointer.get()));
+            PoohBear.commands.getOrDefault(ctx.instruction(), noop -> {
+            }).accept(ctx);
+            pointer.getAndIncrement();
+        }
+
+        printState(memory, program, pointer);
+        return memory.printBuffer();
+    }
+
+    private static void printState(Memory memory, List<String> program, AtomicInteger pointer) {
+        System.out.println(String.join("", program));
+        System.out.println(" ".repeat(pointer.get()) + "^");
+        System.out.println("cell: " + memory.pointer + "=" + memory.read());
+        System.out.println("clip: " + memory.clipboard());
+        System.out.println("tape: " + memory.cells);
+        System.out.println("buff: " + memory.printBuffer());
+    }
+
     private static void jumpLeft(Context ctx) {
-        if (ctx.memory().read() == 1) return;
+        if (ctx.memory().read() == 0) return;
         var level = 0;
         for (int i = ctx.pointer.get(); i >= 0; i--) {
             if (ctx.program.get(i).equals("E")) level++;
@@ -72,7 +101,7 @@ public class PoohBear {
     }
 
     private static void jumpRight(Context ctx) {
-        if (ctx.memory().read() == 0) return;
+        if (ctx.memory().read() == 1) return;
         var level = 0;
         for (int i = ctx.pointer.get(); i < ctx.program.size(); i++) {
             if (ctx.program.get(i).equals("W")) level++;
@@ -84,32 +113,6 @@ public class PoohBear {
                 }
             }
         }
-    }
-
-    public static String interpret(final String code) {
-        Memory memory = new Memory();
-        List<String> program = Arrays.stream(code.split("")).filter(commands::containsKey).collect(Collectors.toUnmodifiableList());
-        AtomicInteger pointer = new AtomicInteger();
-
-        while (pointer.get() >= 0 && pointer.get() < program.size()) {
-
-            System.out.println(String.join("", program));
-            System.out.println(" ".repeat(pointer.get()) + "^");
-            System.out.println(memory.pointer + " -> " + memory.cells);
-            System.out.println(memory.clipboard());
-            System.out.println("---");
-
-            Context ctx = new Context(memory, program, pointer, program.get(pointer.get()));
-            PoohBear.commands.getOrDefault(ctx.instruction(), noop -> {
-            }).accept(ctx);
-            pointer.getAndIncrement();
-        }
-
-        System.out.println(String.join("", program));
-        System.out.println(" ".repeat(pointer.get()) + "^");
-        System.out.println(memory.pointer + " -> " + memory.cells);
-
-        return memory.printBuffer();
     }
 
     public static class Context {
