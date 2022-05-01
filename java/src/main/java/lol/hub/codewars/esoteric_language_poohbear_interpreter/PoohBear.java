@@ -1,6 +1,7 @@
 package lol.hub.codewars.esoteric_language_poohbear_interpreter;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static java.util.Map.entry;
@@ -9,52 +10,55 @@ import static java.util.Map.entry;
  * @see <a href="https://www.codewars.com/kata/59a9735a485a4d807f00008a">codewars.com</a>
  */
 public class PoohBear {
-    static final Map<String, Consumer<Memory>> commands = Map.ofEntries(
+    static final Map<String, Consumer<Context>> commands = Map.ofEntries(
         /* Add 1 to the current cell */
-        entry("+", m -> m.write(m.read() + 1)),
+        entry("+", ctx -> ctx.memory().write(ctx.memory().read() + 1)),
         /* Subtract 1 from the current cell */
-        entry("-", m -> m.write(m.read() - 1)),
+        entry("-", ctx -> ctx.memory().write(ctx.memory().read() - 1)),
         /* Move the cell pointer 1 space to the right */
-        entry(">", Memory::right),
+        entry(">", ctx -> ctx.memory().right()),
         /* Move the cell pointer 1 space to the left */
-        entry("<", Memory::left),
+        entry("<", ctx -> ctx.memory().left()),
         /* "Copy" the current cell */
-        entry("c", Memory::copy),
+        entry("c", ctx -> ctx.memory().copy()),
         /* Paste the "copied" cell into the current cell */
-        entry("p", Memory::paste),
+        entry("p", ctx -> ctx.memory().paste()),
         /* While the current cell is not equal to 0, jump to the corresponding E */
-        entry("W", Memory::jumpRight),
+        entry("W", ctx -> ctx.memory().jumpRight()),
         /* While the current cell is not equal to 1, jump to the corresponding W */
-        entry("E", Memory::jumpLeft),
+        entry("E", ctx -> ctx.memory().jumpLeft()),
         /* Output the current cell's value as ascii */
-        entry("P", m -> m.appendBuffer(String.valueOf((char) m.read()))),
+        entry("P", ctx -> ctx.memory().appendBuffer(String.valueOf((char) ctx.memory().read()))),
         /* Output the current cell's value as an integer */
-        entry("N", m -> m.appendBuffer(String.valueOf(m.read()))),
+        entry("N", ctx -> ctx.memory().appendBuffer(String.valueOf(ctx.memory().read()))),
         /* Multiply the current cell by 2 */
-        entry("T", m -> m.write(m.read() * 2)),
+        entry("T", ctx -> ctx.memory().write(ctx.memory().read() * 2)),
         /* Square the current cell */
-        entry("Q", m -> m.write(Math.pow(m.read(), 2))),
+        entry("Q", ctx -> ctx.memory().write(Math.pow(ctx.memory().read(), 2))),
         /* Square root the current cell's value */
-        entry("U", m -> m.write(Math.sqrt(m.read()))),
+        entry("U", ctx -> ctx.memory().write(Math.sqrt(ctx.memory().read()))),
         /* Add 2 to the current cell */
-        entry("L", m -> m.write(m.read() + 2)),
+        entry("L", ctx -> ctx.memory().write(ctx.memory().read() + 2)),
         /* Subtract 2 from the current cell */
-        entry("I", m -> m.write(m.read() - 2)),
+        entry("I", ctx -> ctx.memory().write(ctx.memory().read() - 2)),
         /* Divide the current cell by 2 */
-        entry("V", m -> m.write(m.read() / 2)),
+        entry("V", ctx -> ctx.memory().write(ctx.memory().read() / 2)),
         /* Add the copied value to the current cell's value */
-        entry("A", m -> m.write(m.read() + m.clipboard())),
+        entry("A", ctx -> ctx.memory().write(ctx.memory().read() + ctx.memory().clipboard())),
         /* Subtract the copied value from the current cell's value */
-        entry("B", m -> m.write(m.read() - m.clipboard())),
+        entry("B", ctx -> ctx.memory().write(ctx.memory().read() - ctx.memory().clipboard())),
         /* Multiply the current cell's value by the copied value */
-        entry("Y", m -> m.write(m.read() * m.clipboard())),
+        entry("Y", ctx -> ctx.memory().write(ctx.memory().read() * ctx.memory().clipboard())),
         /* Divide the current cell's value by the copied value. */
-        entry("D", m -> m.write(m.read() / m.clipboard())));
+        entry("D", ctx -> ctx.memory().write(ctx.memory().read() / ctx.memory().clipboard())));
 
-    public static String interpret(final String s) {
+    public static String interpret(final String code) {
         Memory memory = new Memory();
-        for (String c : s.split("")) {
-            commands.getOrDefault(c, m -> {}).accept(memory);
+        String[] commands = code.split("");
+        AtomicInteger pointer = new AtomicInteger();
+        while (pointer.get() >= 0 && pointer.get() < commands.length) {
+            Context ctx = new Context(memory, commands, pointer, commands[pointer.getAndIncrement()]);
+            PoohBear.commands.getOrDefault(ctx.instruction(), noop -> {}).accept(ctx);
         }
         return memory.printBuffer();
     }
