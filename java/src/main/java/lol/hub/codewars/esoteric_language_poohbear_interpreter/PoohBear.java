@@ -9,10 +9,6 @@ import static java.util.Map.entry;
  * @see <a href="https://www.codewars.com/kata/59a9735a485a4d807f00008a">codewars.com</a>
  */
 public class PoohBear {
-
-    public static final Consumer<Memory> NOOP = m -> {
-    };
-
     static final Map<String, Consumer<Memory>> commands = Map.ofEntries(
         /* Add 1 to the current cell */
         entry("+", m -> m.write(m.read() + 1)),
@@ -58,9 +54,8 @@ public class PoohBear {
     public static String interpret(final String s) {
         Memory memory = new Memory();
         for (String c : s.split("")) {
-            commands.getOrDefault(c, NOOP).accept(memory);
+            commands.getOrDefault(c, m -> {}).accept(memory);
         }
         return memory.printBuffer();
     }
-
 }
