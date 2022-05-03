@@ -17,7 +17,6 @@ public class AssemblerInterpreter {
 
         System.out.println("--------------code--------------");
         System.out.println(String.join(System.lineSeparator(), code));
-        System.out.println("--------------------------------");
 
         /* label: - (label = identifier + ":", an identifier being a string that does not match any other command).
         Jump commands and call are aimed to these labels positions in the program. */
@@ -139,7 +138,16 @@ public class AssemblerInterpreter {
 
                 /* msg 'Register: ', x - this instruction stores the output of the program. It may contain text strings (delimited by single quotes) and registers. The number of arguments isn't limited and will vary, depending on the program. */
                 case "msg" -> {
-                    message = String.join(", ", Arrays.copyOfRange(inst, 1, inst.length));
+                    StringBuilder sb = new StringBuilder();
+                    for (String part : String.join(" ", Arrays.copyOfRange(inst, 1, inst.length)).split(", ")) {
+                        if (part.startsWith("'")) {
+                            sb.append(part.replaceAll("^[']|[']$", ""));
+                        } else {
+                            sb.append(registers.getOrDefault(part, 0));
+                        }
+                    }
+                    message = sb.toString();
+                    // TODO: resolve registers
                 }
 
                 /* end - this instruction indicates that the program ends correctly, so the stored output is returned (if the program terminates without this instruction it should return the default output: see below). */
@@ -154,7 +162,8 @@ public class AssemblerInterpreter {
             if (end) break;
             pointer++;
         }
-
+        System.out.println("-------------result-------------");
+        System.out.println("    " + message);
         return end ? message : defaultOutput;
     }
 
