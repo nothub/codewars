@@ -138,16 +138,7 @@ public class AssemblerInterpreter {
 
                 /* msg 'Register: ', x - this instruction stores the output of the program. It may contain text strings (delimited by single quotes) and registers. The number of arguments isn't limited and will vary, depending on the program. */
                 case "msg" -> {
-                    StringBuilder sb = new StringBuilder();
-                    for (String part : String.join(" ", Arrays.copyOfRange(inst, 1, inst.length)).split(", ")) {
-                        if (part.startsWith("'")) {
-                            sb.append(part.replaceAll("^[']|[']$", ""));
-                        } else {
-                            sb.append(registers.getOrDefault(part, 0));
-                        }
-                    }
-                    message = sb.toString();
-                    // TODO: resolve registers
+                    message = constructMessage(inst, registers);
                 }
 
                 /* end - this instruction indicates that the program ends correctly, so the stored output is returned (if the program terminates without this instruction it should return the default output: see below). */
@@ -165,6 +156,24 @@ public class AssemblerInterpreter {
         System.out.println("-------------result-------------");
         System.out.println("    " + message);
         return end ? message : defaultOutput;
+    }
+
+    private static String constructMessage(String[] inst, Map<String, Integer> registers) {
+        String rawArgs = String.join(" ", Arrays.copyOfRange(inst, 1, inst.length));
+        StringBuilder message = new StringBuilder();
+        var escaped = false;
+        for (char c : rawArgs.toCharArray()) {
+            if (c == '\'') {
+                escaped = !escaped;
+                continue;
+            }
+            if (escaped) message.append(c);
+            else {
+                if (c == ',' || c == ' ') continue;
+                message.append(registers.getOrDefault(""+c, 0));
+            }
+        }
+        return message.toString();
     }
 
     private static List<String> sanitize(String[] source) {
