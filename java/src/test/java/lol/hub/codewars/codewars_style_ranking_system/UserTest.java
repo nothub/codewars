@@ -186,4 +186,20 @@ public class UserTest {
         assertEquals(21, user.progress);
     }
 
+    @Test
+    public void test9() {
+        User user = new User();
+
+        user.rank = 7;
+        user.progress = 99;
+
+        user.incProgress(8);
+        assertEquals(8, user.rank);
+        assertEquals(0, user.progress);
+
+        user.incProgress(8);
+        assertEquals(8, user.rank);
+        assertEquals(0, user.progress);
+    }
+
 }
