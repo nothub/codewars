@@ -42,6 +42,7 @@ public class User {
             System.out.println("rankup!");
             System.out.println("remain: " + remain);
             progress = 0;
+            if (rank == 8) return;
             progress(remain);
         }
     }
