@@ -15,11 +15,6 @@ public class AssemblerInterpreter {
     public static String interpret(final String input) {
         List<String> code = sanitize(input.split(System.lineSeparator()));
 
-        System.out.println("--------------code--------------");
-        System.out.println(String.join(System.lineSeparator(), code));
-
-        /* label: - (label = identifier + ":", an identifier being a string that does not match any other command).
-        Jump commands and call are aimed to these labels positions in the program. */
         Map<String, Integer> labels = new HashMap<>();
         for (int i = 0; i < code.size(); i++) {
             String line = code.get(i);
@@ -45,107 +40,44 @@ public class AssemblerInterpreter {
         while (pointer >= 0 && pointer < code.size()) {
             String[] inst = code.get(pointer).split(" ");
             switch (inst[0]) {
-
-                /* mov x, y - copy y (either an integer or the value of a register) into register x. */
-                case "mov" -> {
-                    registers.put(inst[1], resolve(inst[2], registers));
-                }
-
-                /* inc x - increase the content of register x by one. */
-                case "inc" -> {
-                    registers.put(inst[1], registers.getOrDefault(inst[1], 0) + 1);
-                }
-
-                /* dec x - decrease the content of register x by one. */
-                case "dec" -> {
-                    registers.put(inst[1], registers.getOrDefault(inst[1], 0) - 1);
-                }
-
-                /* add x, y - add the content of the register x with y (either an integer or the value of a register) and stores the result in x (i.e. register[x] += y). */
-                case "add" -> {
-                    registers.put(inst[1], registers.getOrDefault(inst[1], 0) + resolve(inst[2], registers));
-                }
-
-                /* sub x, y - subtract y (either an integer or the value of a register) from the register x and stores the result in x (i.e. register[x] -= y). */
-                case "sub" -> {
-                    registers.put(inst[1], registers.getOrDefault(inst[1], 0) - resolve(inst[2], registers));
-                }
-
-                /* mul x, y - same with multiply (i.e. register[x] *= y). */
-                case "mul" -> {
-                    registers.put(inst[1], registers.getOrDefault(inst[1], 0) * resolve(inst[2], registers));
-                }
-
-                /* div x, y - same with integer division (i.e. register[x] /= y). */
-                case "div" -> {
-                    registers.put(inst[1], registers.getOrDefault(inst[1], 0) / resolve(inst[2], registers));
-                }
-
-                /* jmp lbl - jumps to the label lbl. */
-                case "jmp" -> {
-                    pointer = labels.get(inst[1]) - 1;
-                }
-
-                /* cmp x, y - compares x (either an integer or the value of a register)
-                                   and y (either an integer or the value of a register).
-                The result is used in the conditional jumps (jne, je, jge, jg, jle and jl) */
+                case "mov" -> registers.put(inst[1], resolve(inst[2], registers));
+                case "inc" -> registers.put(inst[1], registers.getOrDefault(inst[1], 0) + 1);
+                case "dec" -> registers.put(inst[1], registers.getOrDefault(inst[1], 0) - 1);
+                case "add" -> registers.put(inst[1], registers.getOrDefault(inst[1], 0) + resolve(inst[2], registers));
+                case "sub" -> registers.put(inst[1], registers.getOrDefault(inst[1], 0) - resolve(inst[2], registers));
+                case "mul" -> registers.put(inst[1], registers.getOrDefault(inst[1], 0) * resolve(inst[2], registers));
+                case "div" -> registers.put(inst[1], registers.getOrDefault(inst[1], 0) / resolve(inst[2], registers));
+                case "jmp" -> pointer = labels.get(inst[1]) - 1;
                 case "cmp" -> {
                     cmpX = resolve(inst[1], registers);
                     cmpY = resolve(inst[2], registers);
                     cmp = true;
                 }
-
-                /* jne lbl - jump to the label lbl if the values of the previous cmp command were not equal. */
                 case "jne" -> {
                     if (cmp && cmpX != cmpY) pointer = labels.get(inst[1]) - 1;
                 }
-
-                /* je lbl - jump to the label lbl if the values of the previous cmp command were equal. */
                 case "je" -> {
                     if (cmp && cmpX == cmpY) pointer = labels.get(inst[1]) - 1;
                 }
-
-                /* jge lbl - jump to the label lbl if x was greater or equal than y in the previous cmp command. */
                 case "jge" -> {
                     if (cmp && cmpX >= cmpY) pointer = labels.get(inst[1]) - 1;
                 }
-
-                /* jg lbl - jump to the label lbl if x was greater than y in the previous cmp command. */
                 case "jg" -> {
                     if (cmp && cmpX > cmpY) pointer = labels.get(inst[1]) - 1;
                 }
-
-                /* jle lbl - jump to the label lbl if x was less or equal than y in the previous cmp command. */
                 case "jle" -> {
                     if (cmp && cmpX <= cmpY) pointer = labels.get(inst[1]) - 1;
                 }
-
-                /* jl lbl - jump to the label lbl if x was less than y in the previous cmp command. */
                 case "jl" -> {
                     if (cmp && cmpX < cmpY) pointer = labels.get(inst[1]) - 1;
                 }
-
-                /* call lbl - call to the subroutine identified by lbl. When a ret is found in a subroutine, the instruction pointer should return to the instruction next to this call command. */
                 case "call" -> {
                     callStack.add(pointer);
                     pointer = labels.get(inst[1]);
                 }
-
-                /* ret - when a ret is found in a subroutine, the instruction pointer should return to the instruction that called the current function. */
-                case "ret" -> {
-                    pointer = callStack.remove(callStack.size() - 1);
-                }
-
-                /* msg 'Register: ', x - this instruction stores the output of the program. It may contain text strings (delimited by single quotes) and registers. The number of arguments isn't limited and will vary, depending on the program. */
-                case "msg" -> {
-                    message = constructMessage(inst, registers);
-                }
-
-                /* end - this instruction indicates that the program ends correctly, so the stored output is returned (if the program terminates without this instruction it should return the default output: see below). */
-                case "end" -> {
-                    end = true;
-                }
-
+                case "ret" -> pointer = callStack.remove(callStack.size() - 1);
+                case "msg" -> message = constructMessage(inst, registers);
+                case "end" -> end = true;
                 default -> {
                     if (!labels.containsValue(pointer)) System.err.println("unknown instruction: " + inst[0]);
                 }
