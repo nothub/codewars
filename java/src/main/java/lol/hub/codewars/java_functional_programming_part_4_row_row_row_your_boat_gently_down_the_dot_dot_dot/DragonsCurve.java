@@ -12,8 +12,7 @@ import java.util.stream.Collectors;
 public class DragonsCurve {
 
     private final Function<String, String> clean = x -> x.chars()
-        .filter(createFilter('a', false))
-        .filter(createFilter('b', false))
+        .filter(createFilter('a', false).and(createFilter('b', false)))
         .mapToObj(c -> String.valueOf((char) c))
         .collect(Collectors.joining());
 
