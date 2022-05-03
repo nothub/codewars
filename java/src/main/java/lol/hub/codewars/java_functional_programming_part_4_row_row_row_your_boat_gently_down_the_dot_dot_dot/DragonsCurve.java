@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public class DragonsCurve {
 
-    private final Function<String, String> reduce = x -> x.chars()
+    private final Function<String, String> clean = x -> x.chars()
         .filter(createFilter('a', false))
         .filter(createFilter('b', false))
         .mapToObj(c -> String.valueOf((char) c))
@@ -30,7 +30,7 @@ public class DragonsCurve {
                 .collect(Collectors.joining());
             n--;
         }
-        return reduce.apply(s);
+        return clean.apply(s);
     };
 
     public String createCurve(int n) {
