@@ -10,20 +10,32 @@ import java.util.Random;
  */
 public class Psychic {
     public static double guess() {
-        Class<?> rngh = Arrays.stream(Math.class.getDeclaredClasses()).filter(c -> c.getSimpleName().equals("RandomNumberGeneratorHolder")).findAny().orElseThrow();
-        Random random;
         try {
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            Field rng = Arrays.stream(rngh.getDeclaredFields()).filter(f -> f.getName().equals("randomNumberGenerator")).findAny().orElseThrow();
-            rng.setAccessible(true);
-            modifiersField.setInt(rng, rng.getModifiers() & ~Modifier.FINAL);
-            random = (Random) rng.get(null);
-        } catch (IllegalAccessException | NoSuchFieldException err) {
-            err.printStackTrace();
-            throw new IllegalStateException(err.getMessage());
+            Field rng = rng();
+            mods().setInt(rng, rng.getModifiers() & ~Modifier.FINAL);
+            ((Random) rng.get(null)).setSeed(420);
+        } catch (IllegalAccessException ignored) {
         }
-        random.setSeed(420);
         return 0.7621420801912142;
+    }
+
+    private static Field rng() {
+        Field rng = Arrays.stream(Arrays.stream(Math.class.getDeclaredClasses())
+                .filter(c -> c.getSimpleName().equals("RandomNumberGeneratorHolder"))
+                .findAny().orElseThrow().getDeclaredFields())
+            .filter(f -> f.getName().equals("randomNumberGenerator"))
+            .findAny().orElseThrow();
+        rng.setAccessible(true);
+        return rng;
+    }
+
+    private static Field mods() {
+        Field mods = null;
+        try {
+            mods = Field.class.getDeclaredField("modifiers");
+        } catch (NoSuchFieldException ignored) {
+        }
+        mods.setAccessible(true);
+        return mods;
     }
 }
