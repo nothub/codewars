@@ -1,26 +1,22 @@
 package lol.hub.codewars.assembler_interpreter_part_ii;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @see <a href="https://www.codewars.com/kata/58e61f3d8ff24f774400002c">codewars.com</a>
  */
 public class AssemblerInterpreter {
-    private static final String defaultOutput = null;
-    private static final Pattern labelPattern = Pattern.compile("^([^ \\n]+):");
-    private static final Set<String> instructions = Set.of("mov", "inc", "dec", "add", "sub", "mul", "div", "jmp", "cmp", "jne", "je", "jge", "jg", "jle", "jl", "call", "ret", "msg", "end");
 
     public static String interpret(final String input) {
-        List<String> code = sanitize(input.split(System.lineSeparator()));
+        var code = sanitize(input.split(System.lineSeparator()));
 
+        var pattern = Pattern.compile("^([^ \\n]+):");
         Map<String, Integer> labels = new HashMap<>();
         for (int i = 0; i < code.size(); i++) {
-            String line = code.get(i);
+            var line = code.get(i);
             if (line.equals("msg")) continue;
-            if (instructions.contains(line)) continue;
-            Matcher matcher = labelPattern.matcher(line);
+            var matcher = pattern.matcher(line);
             if (matcher.matches()) {
                 labels.put(matcher.group(1), i);
             }
@@ -38,7 +34,7 @@ public class AssemblerInterpreter {
 
         int pointer = 0;
         while (pointer >= 0 && pointer < code.size()) {
-            String[] inst = code.get(pointer).split(" ");
+            var inst = code.get(pointer).split(" ");
             switch (inst[0]) {
                 case "mov" -> registers.put(inst[1], resolve(inst[2], registers));
                 case "inc" -> registers.put(inst[1], registers.getOrDefault(inst[1], 0) + 1);
@@ -79,22 +75,20 @@ public class AssemblerInterpreter {
                 case "msg" -> message = constructMessage(inst, registers);
                 case "end" -> end = true;
                 default -> {
-                    if (!labels.containsValue(pointer)) System.err.println("unknown instruction: " + inst[0]);
+                    if (!labels.containsValue(pointer))
+                        throw new IllegalStateException("unknown instruction: " + inst[0]);
                 }
             }
             if (end) break;
             pointer++;
         }
-        System.out.println("-------------result-------------");
-        System.out.println("    " + message);
-        return end ? message : defaultOutput;
+        return end ? message : null;
     }
 
     private static String constructMessage(String[] inst, Map<String, Integer> registers) {
-        String rawArgs = String.join(" ", Arrays.copyOfRange(inst, 1, inst.length));
-        StringBuilder message = new StringBuilder();
+        var message = new StringBuilder();
         var escaped = false;
-        for (char c : rawArgs.toCharArray()) {
+        for (char c : String.join(" ", Arrays.copyOfRange(inst, 1, inst.length)).toCharArray()) {
             if (c == '\'') {
                 escaped = !escaped;
                 continue;
@@ -102,14 +96,17 @@ public class AssemblerInterpreter {
             if (escaped) message.append(c);
             else {
                 if (c == ',' || c == ' ') continue;
-                message.append(registers.getOrDefault(""+c, 0));
+                message.append(registers.getOrDefault(String.valueOf(c), 0));
             }
         }
         return message.toString();
     }
 
     private static List<String> sanitize(String[] source) {
-        return Arrays.stream(source).map(AssemblerInterpreter::sanitize).filter(s -> !s.isBlank()).toList();
+        return Arrays.stream(source)
+            .map(AssemblerInterpreter::sanitize)
+            .filter(s -> !s.isBlank())
+            .toList();
     }
 
     private static String sanitize(String line) {
