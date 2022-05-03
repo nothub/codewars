@@ -1,49 +1,75 @@
 package lol.hub.codewars.papers_please;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @see <a href="https://www.codewars.com/kata/59d582cafbdd0b7ef90000a0">codewars.com</a>
  */
 public class Inspector {
+
     private static final Set<String> countries = Set.of("Arstotzka", "Antegria", "Impor", "Kolechia", "Obristan", "Republia", "United Federation");
+
     private static final Set<String> defaultDocsAll = Set.of("passport", "certificate_of_vaccination");
     private static final Set<String> defaultDocsCitizens = Set.of("ID_card");
     private static final Set<String> defaultDocsForeigners = Set.of("access_permit", "work_pass", "grant_of_asylum", "diplomatic_authorization");
 
+    private static final Pattern patternWhitelist = Pattern.compile("Allow citizens of (.+)");
+    private static final Pattern blacklistPattern = Pattern.compile("Deny citizens of (.+)");
+    private static final Pattern vaccinationsPattern = Pattern.compile("(.+) require (.+) vaccination");
+    private static final Pattern documentsPattern = Pattern.compile("(.+) require (.+)");
+    private static final Pattern criminalsPattern = Pattern.compile("Wanted by the State: (.+)");
+
     private final Set<String> whitelist = new HashSet<>();
     private final Set<String> blacklist = new HashSet<>();
-    private final Map<String, Set<String>> documents = new HashMap<>();
     private final Map<String, Set<String>> vaccinations = new HashMap<>();
+    private final Map<String, Set<String>> documents = new HashMap<>();
     private final Set<String> criminals = new HashSet<>();
+
+    private static List<String> split(String s) {
+        return new ArrayList<>(List.of(s.split(", ")));
+    }
 
     public void receiveBulletin(String bulletin) {
         for (String s : bulletin.split("\n")) {
 
+            // TODO: whitelist
+            // example: Allow citizens of Obristan
+            // example: Allow citizens of Arstotzka, Obristan
+            List<String> groups = match(patternWhitelist, s);
+
+            // TODO: blacklist
+            // example: Deny citizens of Kolechia, Republia
+            List<String> blacklist = match(blacklistPattern, s);
+
+            // TODO: vaccinations
+            // example: Citizens of Antegria, Republia, Obristan require polio vaccination
+            // example: Entrants no longer require tetanus vaccination
+            List<String> vaccinations = match(vaccinationsPattern, s);
+
+            // TODO: documents
+            // example: Foreigners require access permit
+            // example: Citizens of Arstotzka require ID card
+            // example: Workers require work pass
+            // example: Entrants require passport
+            List<String> documents = match(documentsPattern, s);
+
+            // TODO: criminals
+            // example: Wanted by the State: Hubert Popovic
+            List<String> criminals = match(criminalsPattern, s);
+
         }
+    }
 
-        // TODO: whitelist
-        // example: Allow citizens of Obristan
-        // example: Allow citizens of Arstotzka, Obristan
-
-        // TODO: blacklist
-        // example: Deny citizens of Kolechia, Republia
-
-        // TODO: documents
-        // example: Foreigners require access permit
-        // example: Citizens of Arstotzka require ID card
-        // example: Workers require work pass
-        // example: Entrants require passport
-
-        // TODO: vaccinations
-        // example: Citizens of Antegria, Republia, Obristan require polio vaccination
-        // example: Entrants no longer require tetanus vaccination
-
-        // TODO: criminals
-        // example: Wanted by the State: Hubert Popovic
+    private List<String> match(Pattern p, String s) {
+        List<String> groups = new ArrayList<>();
+        var matcher = p.matcher(s);
+        if (matcher.matches()) {
+            for (int g = 1; g < matcher.groupCount(); g++) {
+                groups.add(matcher.group(g));
+            }
+        }
+        return groups;
     }
 
     /**
