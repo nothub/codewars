@@ -14,12 +14,31 @@ func Snail(arr [][]int) []int {
 	for steps > 0 {
 
 		// y++
+		for i := 0; i < steps; i++ {
+			y++
+			out = append(out, arr[y][x])
+		}
+
 		// x--
-		// steps--
+		for i := 0; i < steps; i++ {
+			x--
+			out = append(out, arr[y][x])
+		}
+		steps--
+
 		// y--
+		for i := 0; i < steps; i++ {
+			y--
+			out = append(out, arr[y][x])
+		}
+
 		// x++
-		// steps--
-		// ...
+		for i := 0; i < steps; i++ {
+			x++
+			out = append(out, arr[y][x])
+		}
+
+		steps--
 
 	}
 
