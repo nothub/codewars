@@ -13,10 +13,6 @@ func Snail(arr [][]int) []int {
 
 	for steps > 0 {
 
-		// init:
-		// steps = length - 1
-		// x++
-
 		// y++
 		// x--
 		// steps--
