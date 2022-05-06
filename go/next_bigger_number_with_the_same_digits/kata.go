@@ -24,6 +24,9 @@ func perm(arr []string) []string {
 
 func permRec(arr []string, i int, out *[]string) {
 	if i > len(arr) {
+		if arr[0] == "0" {
+			return
+		}
 		*out = append(*out, strings.Join(arr, ""))
 		return
 	}
