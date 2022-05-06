@@ -40,3 +40,9 @@ func Test5(t *testing.T) {
 	expected := 414
 	test(t, input, expected)
 }
+
+func Test6(t *testing.T) {
+	input := 59884848459853
+	expected := 59884848498553
+	test(t, input, expected)
+}
