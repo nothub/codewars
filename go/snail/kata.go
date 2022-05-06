@@ -2,6 +2,17 @@ package snail
 
 // https://www.codewars.com/kata/521c2db8ddc89b9b7a0000c1
 
+/*
+S7777777
+66666667
+64444457
+64222357
+64211357
+64333357
+65555557
+77777777
+*/
+
 func Snail(arr [][]int) []int {
 	steps := len(arr) - 1
 
