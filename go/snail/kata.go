@@ -19,7 +19,9 @@ func Snail(arr [][]int) []int {
 	x := steps
 	y := 0
 
-	var out []int
+	//kata spec says an empty slice represents an empty matrix, a nil initialized slice does not pass tests
+	//goland:noinspection GoPreferNilSlice
+	out := []int{}
 	out = append(out, arr[y]...)
 
 	for steps > 0 {
