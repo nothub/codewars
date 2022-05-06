@@ -9,25 +9,26 @@ import (
 )
 
 func NextBigger(n int) int {
-	s := strconv.Itoa(n)
-	a := strings.Split(s, "")
-	perms := perm(a)
-	log.Println(perms)
+	log.Println("input", n)
+	perms := perm(n)
+	log.Println("perms", perms)
 	return 9000
 }
 
-func perm(arr []string) []string {
-	var out []string
+func perm(n int) []int {
+	arr := strings.Split(strconv.Itoa(n), "")
+	var out []int
 	permRec(arr, 0, &out)
 	return out
 }
 
-func permRec(arr []string, i int, out *[]string) {
+func permRec(arr []string, i int, out *[]int) {
 	if i > len(arr) {
 		if arr[0] == "0" {
 			return
 		}
-		*out = append(*out, strings.Join(arr, ""))
+		n, _ := strconv.Atoi(strings.Join(arr, ""))
+		*out = append(*out, n)
 		return
 	}
 	permRec(arr, i+1, out)
