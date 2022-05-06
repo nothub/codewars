@@ -8,29 +8,28 @@ import (
 	"strings"
 )
 
-var perms []string
-
 func NextBigger(n int) int {
 	s := strconv.Itoa(n)
 	a := strings.Split(s, "")
-	Perm(a)
+	var perms []string
+	Perm(a, &perms)
 	log.Println(perms)
 	return 9000
 }
 
-func Perm(a []string) {
-	perm(a, 0)
+func Perm(arr []string, out *[]string) {
+	perm(arr, 0, out)
 }
 
-func perm(a []string, i int) {
-	if i > len(a) {
-		perms = append(perms, strings.Join(a, ""))
+func perm(arr []string, i int, out *[]string) {
+	if i > len(arr) {
+		*out = append(*out, strings.Join(arr, ""))
 		return
 	}
-	perm(a, i+1)
-	for j := i + 1; j < len(a); j++ {
-		a[i], a[j] = a[j], a[i]
-		perm(a, i+1)
-		a[i], a[j] = a[j], a[i]
+	perm(arr, i+1, out)
+	for j := i + 1; j < len(arr); j++ {
+		arr[i], arr[j] = arr[j], arr[i]
+		perm(arr, i+1, out)
+		arr[i], arr[j] = arr[j], arr[i]
 	}
 }
