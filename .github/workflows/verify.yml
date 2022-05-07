@@ -10,7 +10,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: "^1.18"
-      - name: "go test"
+      - name: "Run go test"
         working-directory: ./go
         run: go test ./...
 
@@ -25,6 +25,6 @@ jobs:
           distribution: "zulu"
           check-latest: true
           cache: "maven"
-      - name: "maven verify"
+      - name: "Run mvn verify"
         working-directory: ./java
         run: mvn --batch-mode --show-version --errors --fail-fast verify
