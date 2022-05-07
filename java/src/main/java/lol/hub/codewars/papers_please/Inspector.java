@@ -8,17 +8,35 @@ import java.util.regex.Pattern;
  */
 public class Inspector {
 
-    private static final Set<String> countries = Set.of("Arstotzka", "Antegria", "Impor", "Kolechia", "Obristan", "Republia", "United Federation");
+    // rule strings -> regex pattern factory -> predicate factory
 
-    private static final Set<String> defaultDocsAll = Set.of("passport", "certificate_of_vaccination");
+    // a document is considered expired if the expiration date is November 22, 1982 or earlier
+
+    private static final Set<String> defaultDocsAll = Set.of("passport");
     private static final Set<String> defaultDocsCitizens = Set.of("ID_card");
     private static final Set<String> defaultDocsForeigners = Set.of("access_permit", "work_pass", "grant_of_asylum", "diplomatic_authorization");
 
-    private static final Pattern patternWhitelist = Pattern.compile("Allow citizens of (.+)");
-    private static final Pattern blacklistPattern = Pattern.compile("Deny citizens of (.+)");
-    private static final Pattern vaccinationsPattern = Pattern.compile("(.+) require (.+) vaccination");
-    private static final Pattern documentsPattern = Pattern.compile("(.+) require (.+)");
+    private static final Set<String> countries = Set.of("Arstotzka", "Antegria", "Impor", "Kolechia", "Obristan", "Republia", "United Federation");
+
+    /* People Type Tokens */
+    // Entrants
+    // Workers
+    // Foreigners
+    // Citizens of <country>
+
+    /* Structure Tokens */
+    // Allow
+    // Deny
+    // no longer
+    // require
+    // vaccination
+    // Wanted by the State:
+
     private static final Pattern criminalsPattern = Pattern.compile("Wanted by the State: (.+)");
+    private static final Pattern patternWhitelist = Pattern.compile("Allow citizens of (.+)");
+    private static final Pattern patternBlacklist = Pattern.compile("Deny citizens of (.+)");
+    //private static final Pattern vaccinationsPattern = Pattern.compile("(.+) require (.+) vaccination");
+    //private static final Pattern documentsPattern = Pattern.compile("(.+) require (.+)");
 
     private final Set<String> whitelist = new HashSet<>();
     private final Set<String> blacklist = new HashSet<>();
@@ -31,32 +49,60 @@ public class Inspector {
     }
 
     public void receiveBulletin(String bulletin) {
-        for (String s : bulletin.split("\n")) {
+        System.out.println("------------bulletin------------");
+        System.out.println(bulletin);
+        System.out.println("--------------------------------");
+        for (String line : bulletin.split("\n")) {
 
-            // TODO: whitelist
+            boolean removal = line.contains("no longer ");
+            if (removal) line = line.replaceAll("no longer ", "");
+
+            // example: Wanted by the State: Hubert Popovic
+            var wanteds = match(criminalsPattern, line);
+            if (wanteds.size() > 0) {
+                List<String> criminals = List.of(wanteds.get(0).split(", "));
+                System.out.println("adding criminals: " + criminals);
+                this.criminals.addAll(criminals);
+            }
+
             // example: Allow citizens of Obristan
             // example: Allow citizens of Arstotzka, Obristan
-            List<String> groups = match(patternWhitelist, s);
-
-            // TODO: blacklist
+            var wlist = match(patternWhitelist, line);
+            if (wlist.size() > 0) {
+                System.out.println("adding whitelist: " + wlist);
+                this.whitelist.addAll(List.of(wlist.get(0).split(", ")));
+            }
             // example: Deny citizens of Kolechia, Republia
-            List<String> blacklist = match(blacklistPattern, s);
+            var blist = match(patternBlacklist, line);
+            if (blist.size() > 0) {
+                System.out.println("removing whitelist: " + blist);
+                this.whitelist.removeAll(List.of(blist.get(0).split(", ")));
+            }
 
             // TODO: vaccinations
             // example: Citizens of Antegria, Republia, Obristan require polio vaccination
             // example: Entrants no longer require tetanus vaccination
-            List<String> vaccinations = match(vaccinationsPattern, s);
+//            List<String> vacs = match(vaccinationsPattern, line);
+//            for (int i = 0; i < vacs.size(); i = i + 2) {
+//                String group = vacs.get(i);
+//                String illnes = vacs.get(i + 1);
+//                Set<String> set = vaccinations.getOrDefault(group, new HashSet<>());
+//
+//                if (removal) {
+//                    List.of(vacs.get(1).split(", ")).forEach(set::remove);
+//                } else {
+//                    set.addAll(List.of(illnes.split(", ")));
+//                }
+//                vaccinations.put(group, set);
+//
+//            }
 
             // TODO: documents
             // example: Foreigners require access permit
             // example: Citizens of Arstotzka require ID card
             // example: Workers require work pass
             // example: Entrants require passport
-            List<String> documents = match(documentsPattern, s);
-
-            // TODO: criminals
-            // example: Wanted by the State: Hubert Popovic
-            List<String> criminals = match(criminalsPattern, s);
+            //List<String> documents = match(documentsPattern, line);
 
         }
     }
@@ -79,9 +125,39 @@ public class Inspector {
      * Each property will be a string value. These properties may include the following:
      */
     public String inspect(Map<String, String> person) {
+        System.out.println("-------------person-------------");
+        System.out.println(person);
+        System.out.println("--------------------------------");
+
         // Conditions for passing inspection
         // - All required documents are present
+        for (String doc : defaultDocsAll) {
+            if (!person.containsKey(doc)) {
+                return "Entry denied: missing required " + doc + ".";
+            }
+        }
+
         // - There is no conflicting information across the provided documents
+        for (String doc1 : person.keySet()) {
+            for (String doc2 : person.keySet()) {
+                if (doc1.equals(doc2)) continue;
+
+                Map<String, String> entries1 = readDoc(person.get(doc1));
+                Map<String, String> entries2 = readDoc(person.get(doc2));
+
+                for (Map.Entry<String, String> e1 : entries1.entrySet()) {
+                    for (Map.Entry<String, String> e2 : entries2.entrySet()) {
+                        if (e1 == null || e2 == null) continue;
+                        if (!e1.getKey().equals(e2.getKey())) continue;
+
+                        if (!e1.getValue().equals(e2.getValue())) {
+                            return "Detainment: " + e1.getKey().replaceAll("#", " number") + " mismatch.";
+                        }
+                    }
+                }
+            }
+        }
+
         // - All documents are current (ie. none have expired) -- a document is considered expired if the expiration date is November 22, 1982 or earlier
         // - The entrant is not a wanted criminal
         // - If a certificate_of_vaccination is required and provided, it must list the required vaccination
@@ -113,6 +189,18 @@ public class Inspector {
         // In some cases, there may be multiple reasons for denying or detaining an entrant. For this exercise, you will only need to provide one reason.
 
         // If the entrant meets the criteria for both entry denial and detainment, priority goes to detaining.
-        return "";
+
+        String reason = "";
+        // Detainment: Entrant is a wanted criminal.
+        return "Glory to Arstotzka.";
+    }
+
+    private Map<String, String> readDoc(String doc) {
+        Map<String, String> data = new HashMap<>();
+        for (String line : doc.split("\n")) {
+            var entry = line.split(": ");
+            data.put(entry[0], entry[1]);
+        }
+        return data;
     }
 }
