@@ -1,3 +1,4 @@
+import sys
 from typing import List
 
 from kata import spiralize
@@ -5,8 +6,8 @@ from kata import spiralize
 
 def test(actual: List[List[int]], expected: List[List[int]]):
     if actual != expected:
-        print("expected: " + str(expected))
-        print("actual:   " + str(actual))
+        print("expected: " + str(expected), file=sys.stderr)
+        print("actual:   " + str(actual), file=sys.stderr)
         raise AssertionError()
 
 
