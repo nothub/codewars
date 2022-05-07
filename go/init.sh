@@ -3,7 +3,7 @@
 set -euo pipefail
 
 package="$1"
-kata_url="$2"
+url="$2"
 
 if [ -d "$package" ]; then
     echo 1>&2 "$package is already present!"
@@ -16,7 +16,7 @@ cd "$package"
 cat <<EOF >kata.go
 package $package
 
-// $kata_url
+// $url
 
 import "log"
 
@@ -30,7 +30,7 @@ EOF
 cat <<EOF >kata_test.go
 package $package
 
-// $kata_url
+// $url
 
 import "testing"
 

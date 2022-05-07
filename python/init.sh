@@ -2,19 +2,21 @@
 
 set -euo pipefail
 
-kata_name="$1"
-kata_url="$2"
+package="$1"
+url="$2"
 
-if [ -d "$kata_name" ]; then
-    echo 1>&2 "$kata_name is already present!"
+if [ -d "$package" ]; then
+    echo 1>&2 "$package is already present!"
     exit 1
 fi
 
-mkdir -p "$kata_name"
-cd "$kata_name"
+mkdir -p "$package"
+cd "$package"
+
+touch __init__.py
 
 cat <<EOF >kata.py
 def solve(b: bool) -> bool:
-    """\`codewars.com <$kata_url>\`_"""
+    """\`codewars.com <$url>\`_"""
     return not b
 EOF
