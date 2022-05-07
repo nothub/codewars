@@ -10,42 +10,39 @@ def spiralize(size: int) -> List[List[int]]:
         for _ in range(size):
             spiral[i].append(0)
 
+    steps = size - 1
+    x = steps
+    y = 0
+
+    for i in range(size):
+        spiral[y][i] = 1
+
+    while steps > 0:
+
+        for _ in range(steps):
+            y = y + 1  # down
+            spiral[y][x] = 1
+
+        if steps == 1:
+            break
+
+        for _ in range(steps):
+            x = x - 1  # left
+            spiral[y][x] = 1
+
+        steps = steps - 2
+
+        for _ in range(steps):
+            y = y - 1  # up
+            spiral[y][x] = 1
+
+        if steps == 1:
+            break
+
+        for _ in range(steps):
+            x = x + 1  # right
+            spiral[y][x] = 1
+
+        steps = steps - 2
+
     return spiral
-
-
-"""snail algo:
-    steps := size - 1
-
-    x := steps
-    y := 0
-
-    out := []int{}
-    out = append(out, arr[y]...)
-
-    for steps > 0 {
-        for i := 0; i < steps; i++ {
-            y++ // down
-            out = append(out, arr[y][x])
-        }
-        if steps == 1 { break; }
-        for i := 0; i < steps; i++ {
-            x-- // left
-            out = append(out, arr[y][x])
-        }
-        steps--
-        steps--
-        for i := 0; i < steps; i++ {
-            y-- // up
-            out = append(out, arr[y][x])
-        }
-        if steps == 1 { break; }
-        for i := 0; i < steps; i++ {
-            x++ // right
-            out = append(out, arr[y][x])
-        }
-        steps--
-        steps--
-    }
-
-    return out
-    """
