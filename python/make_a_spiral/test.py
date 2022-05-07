@@ -4,7 +4,7 @@ from kata import spiralize
 
 
 def test(actual: List[List[int]], expected: List[List[int]]):
-    if actual is not expected:
+    if actual != expected:
         print("expected: " + str(expected))
         print("actual:   " + str(actual))
         raise AssertionError()
