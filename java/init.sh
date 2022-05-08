@@ -13,7 +13,7 @@ if [ -d "$dir_src" ] || [ -d "$dir_test" ]; then
     exit 1
 fi
 
-module_root="$(dirname "$(readlink -f "$0")")"
+module_root="$(dirname "$(readlink -f -- "$0")")"
 
 mkdir -p "$dir_src"
 cd "$dir_src"
