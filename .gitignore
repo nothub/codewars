@@ -17,8 +17,12 @@
 !/go/**/*.go
 !/go/**/go.mod
 
+# bash
+!/bash/**/*.sh
+
 # util
 !/init.sh
 !/go/init.sh
 !/java/init.sh
 !/python/init.sh
+!/bash/init.sh
