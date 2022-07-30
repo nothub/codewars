@@ -2,21 +2,29 @@ version: 2
 updates:
 
   - package-ecosystem: "maven"
-    directory: "/"
+    directory: "/java/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     assignees:
       - "nothub"
     commit-message:
       prefix: "maven"
       include: "scope"
 
+  - package-ecosystem: "gomod"
+    directory: "/go/"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "nothub"
+    commit-message:
+      prefix: "gomod"
+      include: "scope"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     assignees:
       - "nothub"
     commit-message:
