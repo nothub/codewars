@@ -55,18 +55,18 @@ if [[ -z ${kata_id} || -z ${language} ]]; then
     exit 64
 fi
 
-if [[ -d ${language} ]]; then
-    cd "${language}"
-else
-    panic "No module for language: ${language}"
-fi
-
 json=$(curl --location --silent "https://www.codewars.com/api/v1/code-challenges/${kata_id}")
 if [[ "$(printf '%s\n' "$json" | jq --raw-output 'has("slug")')" == "false" ]]; then
     panic "Unable to resolve kata id: ${kata_id}"
 fi
 name=$(printf '%s\n' "$json" | jq --raw-output '.slug' | sed -e 's/[^a-z0-9]/_/g')
 url=$(printf '%s\n' "$json" | jq --raw-output '.url')
+
+if [[ -d ${language} ]]; then
+    cd "${language}"
+else
+    panic "No module for language: ${language}"
+fi
 
 source init.sh
 if type init_kata >/dev/null 2>&1; then

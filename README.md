@@ -1,1 +1,1 @@
-[![badge](https://www.codewars.com/users/nothub/badges/micro)](https://www.codewars.com/users/nothub)
+[![badge](https://www.codewars.com/users/nothub/badges/small)](https://www.codewars.com/users/nothub)

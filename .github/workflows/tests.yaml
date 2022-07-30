@@ -1,8 +1,9 @@
 name: "🚔"
-on: [ push, pull_request ]
+on: [ push ]
 jobs:
 
   go:
+    name: "Go"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v3
@@ -14,6 +15,7 @@ jobs:
         run: go test ./...
 
   java:
+    name: "Java"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v3
