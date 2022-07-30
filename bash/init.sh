@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+init_kata() {
+    kata="$1"
+    url="$2"
 
-slug="$1"
-url="$2"
+    if [[ -d ${kata} ]]; then
+        panic "Kata ${kata} is already present!"
+    fi
+    mkdir -p "${kata}"
 
-if [ -d "$slug" ]; then
-    echo 1>&2 "$slug is already present!"
-    exit 1
-fi
-
-mkdir -p "$slug"
-cd "$slug"
-
-cat <<EOF >kata.sh
+    cat <<EOF >"${kata}/kata.sh"
 #!/usr/bin/env bash
-# $url
-set -e
+# ${url}
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
 echo 0
 EOF
 
-chmod +x kata.sh
+    chmod +x "${kata}/kata.sh"
+}

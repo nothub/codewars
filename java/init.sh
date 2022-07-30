@@ -1,28 +1,24 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+init_kata() {
+    kata="$1"
+    url="$2"
 
-package="lol.hub.codewars.$1"
-url="$2"
+    package="lol.hub.codewars.${kata}"
+    subpath=$(echo "${package}" | sed "s/\./\//g")
+    dir_src="src/main/java/${subpath}"
+    dir_test="src/test/java/${subpath}"
 
-dir_src="src/main/java/lol/hub/codewars/$1"
-dir_test="src/test/java/lol/hub/codewars/$1"
+    if [ -d "${dir_src}" ] || [ -d "${dir_test}" ]; then
+        panic "Kata ${kata} is already present!"
+    fi
 
-if [ -d "$dir_src" ] || [ -d "$dir_test" ]; then
-    echo 1>&2 "$1 is already present!"
-    exit 1
-fi
-
-module_root="$(dirname "$(readlink -f -- "$0")")"
-
-mkdir -p "$dir_src"
-cd "$dir_src"
-
-cat <<EOF >Kata.java
-package $package;
+    mkdir -p "${dir_src}"
+    cat <<EOF >"${dir_src}/Kata.java"
+package ${package};
 
 /**
- * @see <a href="$url">codewars.com</a>
+ * @see <a href="${url}">codewars.com</a>
  */
 public class Kata {
     public static boolean solve(boolean b) {
@@ -31,18 +27,15 @@ public class Kata {
 }
 EOF
 
-cd "$module_root"
-mkdir -p "$dir_test"
-cd "$dir_test"
-
-cat <<EOF >KataTest.java
-package $package;
+    mkdir -p "${dir_test}"
+    cat <<EOF >"${dir_test}/KataTest.java"
+package ${package};
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @see <a href="$url">codewars.com</a>
+ * @see <a href="${url}">codewars.com</a>
  */
 public class KataTest {
     @Test
@@ -51,3 +44,4 @@ public class KataTest {
     }
 }
 EOF
+}

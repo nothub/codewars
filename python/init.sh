@@ -1,22 +1,19 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+init_kata() {
+    kata="$1"
+    url="$2"
 
-package="$1"
-url="$2"
+    if [[ -d ${kata} ]]; then
+        panic "Kata ${kata} is already present!"
+    fi
+    mkdir -p "${kata}"
 
-if [ -d "$package" ]; then
-    echo 1>&2 "$package is already present!"
-    exit 1
-fi
+    touch "${kata}/__init__.py"
 
-mkdir -p "$package"
-cd "$package"
-
-touch __init__.py
-
-cat <<EOF >kata.py
+    cat <<EOF >"${kata}/kata.py"
 def solve(b: bool) -> bool:
     """\`codewars.com <$url>\`_"""
     return not b
 EOF
+}

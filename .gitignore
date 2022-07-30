@@ -1,11 +1,6 @@
 *
 !*/
 
-!/.github/**
-!/.editorconfig
-!/.gitignore
-!/README.md
-
 # java
 !/java/src/**/*.java
 !/java/pom.xml
@@ -15,14 +10,22 @@
 
 # golang
 !/go/**/*.go
-!/go/**/go.mod
+!/go/go.mod
+!/go/go.sum
 
 # bash
 !/bash/**/*.sh
 
-# util
-!/init.sh
-!/go/init.sh
-!/java/init.sh
-!/python/init.sh
-!/bash/init.sh
+# ci
+!/.github/**
+
+# docs
+!/README.md
+
+# kata util
+!/*/init.sh
+!/kata.sh
+
+# misc
+!/**/.gitignore
+!/.editorconfig

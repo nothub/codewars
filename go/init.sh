@@ -1,22 +1,18 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+init_kata() {
+    kata="$1"
+    url="$2"
 
-package="$1"
-url="$2"
+    if [[ -d ${kata} ]]; then
+        panic "Kata ${kata} is already present!"
+    fi
+    mkdir -p "${kata}"
 
-if [ -d "$package" ]; then
-    echo 1>&2 "$package is already present!"
-    exit 1
-fi
+    cat <<EOF >"${kata}/kata.go"
+package ${kata}
 
-mkdir -p "$package"
-cd "$package"
-
-cat <<EOF >kata.go
-package $package
-
-// $url
+// ${url}
 
 import "log"
 
@@ -27,10 +23,10 @@ func solve(word string) string {
 }
 EOF
 
-cat <<EOF >kata_test.go
-package $package
+    cat <<EOF >"${kata}/kata_test.go"
+package ${kata}
 
-// $url
+// ${url}
 
 import "testing"
 
@@ -47,3 +43,4 @@ func TestHelloWorld(t *testing.T) {
 	test(t, input, expected)
 }
 EOF
+}
