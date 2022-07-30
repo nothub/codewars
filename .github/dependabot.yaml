@@ -7,9 +7,6 @@ updates:
       interval: "daily"
     assignees:
       - "nothub"
-    commit-message:
-      prefix: "maven"
-      include: "scope"
 
   - package-ecosystem: "gomod"
     directory: "/go/"
@@ -17,9 +14,6 @@ updates:
       interval: "daily"
     assignees:
       - "nothub"
-    commit-message:
-      prefix: "gomod"
-      include: "scope"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -27,6 +21,3 @@ updates:
       interval: "daily"
     assignees:
       - "nothub"
-    commit-message:
-      prefix: "github-actions"
-      include: "scope"
